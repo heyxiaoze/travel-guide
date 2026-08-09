@@ -46,7 +46,7 @@
     var items = (d.items || []).map(function (it) {
       if (it.place) {
         return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div>' +
-          '<div class="tl-text">' + window.P(it.place.name, it.place.copy, it.place.sub) + (it.note ? ' ' + it.note : '') + '</div></li>';
+          '<div class="tl-text">' + window.P(it.place.name, it.place.copy, it.place.sub) + (it.note ? '<div class="tl-note">' + it.note + '</div>' : '') + '</div></li>';
       }
       return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div><div class="tl-text">' + it.s + '</div></li>';
     }).join('');

@@ -337,6 +337,7 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
 .tl-item .tl-time { font-weight: 600; color: var(--accent-dark); font-size: 13px; font-family: var(--font); }
 .tl-item .tl-text { font-size: 14.5px; color: var(--text-2); line-height: 1.7; }
 .tl-item .tl-text .place { margin-top: 4px; }
+.tl-item .tl-text .tl-note { display: block; margin-top: 5px; color: var(--text-2); }
 .day-foot { padding: 0 22px 18px; }
 .day-foot .label { font-size: 12px; color: var(--muted); font-weight: 600; margin: 8px 0 4px; letter-spacing: .5px; text-transform: uppercase; font-family: var(--font); }
 
