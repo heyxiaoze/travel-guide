@@ -23,6 +23,8 @@
         return '<div class="place-row">' + window.Plist(b.items) + '</div>';
       case 'points':
         return renderPoints(b);
+      case 'checklist':
+        return renderChecklist(b);
       case 'table':
         var head = '<tr>' + b.head.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
         var rows = b.rows.map(function (r) {
@@ -54,6 +56,20 @@
           '<div class="point-k">' + esc(it.k) + '</div>' +
           '<div class="point-v">' + it.v + '</div>' +
         '</div></div>';
+    }).join('') + '</div>';
+  }
+
+  /* ---------- Checkbox 清单 ---------- */
+  function renderChecklist(c) {
+    return '<div class="checklist-list">' + (c.groups || []).map(function (g) {
+      var titleHtml = g.title ? '<div class="checklist-group-title">' + esc(g.title) + '</div>' : '';
+      var itemsHtml = (g.items || []).map(function (it) {
+        return '<label class="checklist-item">' +
+          '<input type="checkbox" class="checklist-cb" />' +
+          '<span class="checklist-text">' + esc(it) + '</span>' +
+        '</label>';
+      }).join('');
+      return '<div class="checklist-group">' + titleHtml + '<div class="checklist-items">' + itemsHtml + '</div></div>';
     }).join('') + '</div>';
   }
 

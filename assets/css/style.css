@@ -292,23 +292,50 @@ h1, h2, h3, h4 { color: var(--text); font-family: var(--font); letter-spacing: -
 .callout.info .ct { color: var(--text-2); }
 
 /* ---------- 要点卡片（独立成块的①②③） ---------- */
-.points-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.points-list { display: flex; flex-direction: column; gap: 4px; margin: 10px 0; }
 .point-item {
-  display: flex; gap: 10px; align-items: flex-start;
+  display: flex; gap: 9px; align-items: center;
   background: var(--surface); border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
-  border-radius: var(--radius-sm); padding: 11px 14px;
+  border-radius: var(--radius-sm); padding: 7px 12px;
 }
 .point-num {
-  font-weight: 700; color: var(--accent); font-size: 14px;
+  font-weight: 700; color: var(--accent); font-size: 13px;
   background: var(--surface-2); border: 1px solid var(--border);
-  width: 24px; height: 24px; border-radius: 50%; flex: none;
+  width: 22px; height: 22px; border-radius: 50%; flex: none;
   display: grid; place-items: center; flex-shrink: 0;
   font-family: var(--font);
 }
-.point-content { flex: 1; min-width: 0; }
-.point-k { font-weight: 600; color: var(--text); font-size: 13.5px; margin-bottom: 2px; }
-.point-v { color: var(--text-2); font-size: 13px; line-height: 1.65; }
+.point-content { flex: 1; min-width: 0; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.point-k { font-weight: 600; color: var(--text); font-size: 13.5px; flex: none; }
+.point-v { color: var(--text-2); font-size: 13px; line-height: 1.5; flex: 1; min-width: 0; }
+
+/* ---------- Checkbox 清单 ---------- */
+.checklist-list { display: flex; flex-direction: column; gap: 12px; margin: 12px 0; }
+.checklist-group {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+}
+.checklist-group-title {
+  font-size: 12px; font-weight: 600; color: var(--accent-dark);
+  letter-spacing: .3px; text-transform: uppercase; margin-bottom: 8px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.checklist-items { display: flex; flex-direction: column; gap: 4px; }
+.checklist-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 6px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: background var(--dur) var(--ease);
+}
+.checklist-item:hover { background: var(--surface-2); }
+.checklist-cb {
+  width: 16px; height: 16px; flex: none; accent-color: var(--accent);
+  cursor: pointer; margin: 0;
+}
+.checklist-text { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.checklist-item:has(.checklist-cb:checked) .checklist-text {
+  color: var(--muted); text-decoration: line-through;
+}
 
 /* ========== Tables ========== */
 .table-wrap {
@@ -334,17 +361,17 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
 /* ========== Place Boxes ========== */
 .place {
   display: inline-flex; align-items: center; gap: 5px;
-  border: 1px solid var(--border); background: var(--surface-2);
-  border-radius: var(--radius-sm); padding: 3px 8px 3px 9px;
-  margin: 2px 4px 2px 0; font-size: 12.5px; color: var(--text);
+  border: 1px solid var(--border); background: var(--surface);
+  border-radius: var(--radius-sm); padding: 4px 9px 4px 10px;
+  margin: 3px 5px 3px 0; font-size: 13px; color: var(--text);
   cursor: pointer; user-select: none; transition: all var(--dur) var(--ease);
   max-width: 100%;
 }
-.place:hover { background: var(--surface); border-color: var(--muted-2); }
+.place:hover { background: var(--surface-2); border-color: var(--accent); box-shadow: 0 1px 3px rgb(0 0 0 / .06); }
 .place:active { transform: scale(.97); }
 .place .ic-pin { width: 13px; height: 13px; fill: var(--warm); flex: none; }
-.place .place-body { display: flex; flex-direction: column; line-height: 1.18; min-width: 0; }
-.place .place-name { font-weight: 600; }
+.place .place-body { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.place .place-name { font-weight: 700; color: var(--text); }
 .place .place-sub { font-size: 10.5px; color: var(--muted); }
 .place .ic-copy {
   width: 11px; height: 11px; fill: var(--muted); opacity: .45; flex: none; margin-left: 2px;
@@ -397,12 +424,15 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
 }
 .tl-item:hover::before { background: var(--accent); border-color: var(--accent); }
 .tl-item .tl-time {
-  font-weight: 600; color: var(--muted); font-size: 11.5px;
-  margin-bottom: 1px; font-variant-numeric: tabular-nums;
+  display: inline-block; font-weight: 700; color: var(--text);
+  font-size: 11px; padding: 2px 7px; border-radius: 9999px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  margin-bottom: 4px; font-variant-numeric: tabular-nums;
+  letter-spacing: .2px;
 }
-.tl-item .tl-text { font-size: 13.5px; color: var(--text-2); line-height: 1.68; }
+.tl-item .tl-text { font-size: 14px; color: var(--text); line-height: 1.68; }
 .tl-item .tl-text .place { margin-top: 4px; }
-.tl-item .tl-note { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
+.tl-item .tl-text .tl-note { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
 
 .day-foot { padding: 0 18px 14px; }
 .day-foot .label {
