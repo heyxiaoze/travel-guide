@@ -73,13 +73,31 @@
     }).join('') + '</div>';
   }
 
+  // 把地点/活动的性质标签映射成颜色类（关键词匹配，避免数据里写死 class）
+  function tagClass(t) {
+    if (/免费|不收费/.test(t)) return 'free';
+    if (/预约|需约|必抢|抢票/.test(t)) return 'book';
+    if (/拍照|出片|摄影/.test(t)) return 'photo';
+    if (/换电|充电|补能/.test(t)) return 'charge';
+    if (/洗澡|温泉|淋浴/.test(t)) return 'bath';
+    if (/可选|备选/.test(t)) return 'opt';
+    if (/补给|采购|补给/.test(t)) return 'supply';
+    return 'neutral';
+  }
+  function renderTags(it) {
+    if (!it.tags || !it.tags.length) return '';
+    return '<div class="tl-tags">' + it.tags.map(function (t) {
+      return '<span class="tl-tag tag-' + tagClass(t) + '">' + esc(t) + '</span>';
+    }).join('') + '</div>';
+  }
+
   function renderDay(d, id) {
     var items = (d.items || []).map(function (it) {
       if (it.place) {
-        return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div>' +
+        return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div>' + renderTags(it) +
           '<div class="tl-text">' + window.P(it.place.name, it.place.copy, it.place.sub) + (it.note ? '<div class="tl-note">' + it.note + '</div>' : '') + '</div></li>';
       }
-      return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div><div class="tl-text">' + it.s + '</div></li>';
+      return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div>' + renderTags(it) + '<div class="tl-text">' + it.s + '</div></li>';
     }).join('');
 
     var foot = '';

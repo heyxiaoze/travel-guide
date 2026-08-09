@@ -430,6 +430,23 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
   margin-bottom: 4px; font-variant-numeric: tabular-nums;
   letter-spacing: .2px;
 }
+/* 地点/活动的性质标签（免费·预约·拍照·换电·洗澡…） */
+.tl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 5px; }
+.tl-item:hover .tl-tags { /* 保持原样，hover 不改变标签 */ }
+.tl-tag {
+  font-size: 10.5px; font-weight: 600; line-height: 1;
+  padding: 2px 7px; border-radius: 9999px;
+  border: 1px solid var(--border); background: var(--surface-2);
+  color: var(--muted); white-space: nowrap; letter-spacing: .2px;
+}
+.tag-free   { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+.tag-book   { background: #fff7ed; border-color: #fed7aa; color: #c2410c; }
+.tag-photo  { background: #fdf2f8; border-color: #fbcfe8; color: #be185d; }
+.tag-charge { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.tag-bath   { background: #ecfeff; border-color: #a5f3fc; color: #0e7490; }
+.tag-opt    { background: var(--surface-2); border-color: var(--border); color: var(--muted); }
+.tag-supply { background: #fefce8; border-color: #fde68a; color: #a16207; }
+.tag-neutral{ background: var(--surface-2); border-color: var(--border); color: var(--muted); }
 .tl-item .tl-text { font-size: 14px; color: var(--text); line-height: 1.68; }
 .tl-item .tl-text .place { margin-top: 4px; }
 .tl-item .tl-text .tl-note { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
