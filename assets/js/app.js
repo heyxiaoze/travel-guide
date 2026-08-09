@@ -90,7 +90,7 @@
   function renderHome() {
     var guides = window.GUIDE_ORDER.map(function (id) { return window.TRAVEL_GUIDES[id]; });
     var cards = guides.map(function (g) {
-      return '<div class="guide-card" data-id="' + esc(g.id) + '">' +
+      return '<div class="guide-card reveal" data-id="' + esc(g.id) + '">' +
         '<div class="guide-cover">' + esc(g.emoji || '🧭') + '</div>' +
         '<div class="body"><h3>' + esc(g.title) + '</h3>' +
         '<p class="sub">' + esc(g.subtitle || '') + '</p>' +
@@ -101,12 +101,16 @@
 
     return '' +
       '<header class="hero"><div class="wrap">' +
-        '<h1>旅行手账 · Travel Guides</h1>' +
-        '<p>自驾 / 床车 / 充电换电 / 景点预约 / 美食与营地，一站收藏。点击任意攻略开始阅读，地点小框框点一下即可复制，直接粘进高德 / 百度导航。</p>' +
-        '<div class="tagline"><span class="pill">🛏️ 睡车里</span><span class="pill">🔋 蔚来 / 乐道换电</span><span class="pill">🗺️ 错峰避堵</span><span class="pill">📋 复制即导航</span></div>' +
+        '<span class="eyebrow hero-anim d1">🧭 旅行手账 · Travel Guides</span>' +
+        '<h1 class="hero-anim d2">自驾床车 × 充换电 × 错峰避堵，<br>一站收藏你的旅行攻略</h1>' +
+        '<p class="hero-anim d3">从大连到青甘大环线：路线、过路费、换电点、景点预约、单人美食与免费营地，全部按日期排好。地点小框框点一下即可复制，直接粘进高德 / 百度导航。</p>' +
+        '<div class="cta-row hero-anim d4">' +
+          '<a class="cta" href="#guides">浏览全部攻略</a>' +
+          (guides.length ? '<a class="cta ghost" href="#/guide/' + esc(guides[0].id) + '">直接看青甘大环线 →</a>' : '') +
+        '</div>' +
       '</div></header>' +
       '<div class="wrap"><div class="section-title"><h2>全部攻略</h2><span class="line"></span></div>' +
-      (guides.length ? '<div class="guide-grid">' + cards + '</div>' : '<div class="empty-note">还没有攻略，把数据文件放进 <code>data/</code> 并在 <code>index.html</code> 引入即可。</div>') +
+      (guides.length ? '<div class="guide-grid" id="guides">' + cards + '</div>' : '<div class="empty-note">还没有攻略，把数据文件放进 <code>data/</code> 并在 <code>index.html</code> 引入即可。</div>') +
       '</div>';
   }
 
@@ -121,7 +125,7 @@
 
     var sections = (g.sections || []).map(function (s, i) {
       var blocks = (s.blocks || []).map(renderBlock).join('');
-      return '<section class="section" id="sec-' + i + '">' +
+      return '<section class="section reveal" id="sec-' + i + '">' +
         '<h2><span class="ic">' + (s.icon || '•') + '</span>' + esc(s.title) + '</h2>' +
         (s.lead ? '<p class="lead">' + s.lead + '</p>' : '') +
         blocks + '</section>';
@@ -158,6 +162,36 @@
       '<div class="wrap">' + sections + '</div>';
   }
 
+  /* ---------- 流畅动效：滚动渐显 + 错落入场 ---------- */
+  function setupReveal() {
+    // 错落入场：首页卡片、详情日卡片按组内序号设置延迟
+    document.querySelectorAll('.guide-grid').forEach(function (grid) {
+      grid.querySelectorAll('.guide-card').forEach(function (c, i) { if (i < 10) c.style.animationDelay = (i * 60) + 'ms'; });
+    });
+    document.querySelectorAll('.section').forEach(function (sec) {
+      sec.querySelectorAll('.day').forEach(function (d, i) { if (i < 12) d.style.animationDelay = (i * 70) + 'ms'; });
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.reveal').forEach(function (e) { e.classList.add('is-visible'); });
+      return;
+    }
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.04 });
+    document.querySelectorAll('.reveal').forEach(function (e) { obs.observe(e); });
+  }
+
+  function setupHeaderShadow() {
+    var h = document.querySelector('.site-header');
+    if (!h) return;
+    var onScroll = function () { h.classList.toggle('scrolled', window.scrollY > 8); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
   /* ---------- 路由 ---------- */
   function router() {
     var h = location.hash || '';
@@ -169,7 +203,8 @@
       root.innerHTML = renderHome();
       window.scrollTo(0, 0);
     }
-    // 子导航高亮
+    // 子导航高亮 + 入场动效
+    setupReveal();
     var links = document.querySelectorAll('.subnav a');
     if (links.length) {
       var obs = new IntersectionObserver(function (entries) {
@@ -218,5 +253,6 @@
   }
 
   window.addEventListener('hashchange', router);
+  setupHeaderShadow();
   router();
 })();
