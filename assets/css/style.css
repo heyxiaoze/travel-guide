@@ -210,13 +210,13 @@ h1, h2, h3, h4 { color: var(--text); letter-spacing: -.01em; line-height: 1.25; 
 /* 行程摘要面板（2列，参考截图顶部） */
 .summary-panel {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  box-shadow: var(--shadow-sm); padding: 28px 30px; margin-top: 8px;
+  box-shadow: var(--shadow-sm); padding: 30px 32px; margin-top: 12px;
 }
 .summary-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 40px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 48px;
 }
-.summary-item { display: flex; align-items: baseline; gap: 10px; font-size: 14.5px; }
-.summary-item .sl { color: var(--muted); min-width: 72px; font-weight: 500; font-family: var(--font); }
+.summary-item { display: flex; align-items: baseline; gap: 10px; font-size: 15px; }
+.summary-item .sl { color: var(--muted); min-width: 80px; font-weight: 500; font-family: var(--font); }
 .summary-item .sv { color: var(--text); font-weight: 500; }
 
 /* ---------- 子导航 ---------- */
@@ -237,42 +237,44 @@ h1, h2, h3, h4 { color: var(--text); letter-spacing: -.01em; line-height: 1.25; 
 .subnav a.active { background: var(--accent-soft); color: var(--accent-dark); border-color: var(--accent-2); font-weight: 600; }
 
 /* ---------- 内容区块 ---------- */
-.section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+.section { padding: 56px 0; border-bottom: 1px solid var(--border); }
 .section:last-child { border-bottom: 0; }
 .section > h2 {
-  font-size: 24px; margin: 0 0 10px; font-weight: 600; color: var(--text);
-  display: flex; align-items: center; gap: 12px; font-family: var(--font-serif);
+  font-size: 26px; margin: 0 0 14px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 14px; font-family: var(--font-serif);
+  padding-bottom: 16px; border-bottom: 1px solid var(--border-2);
 }
 .section > h2 .ic {
-  width: 36px; height: 36px; border-radius: var(--radius-sm); flex: none;
-  background: var(--surface-2); color: var(--accent-dark);
-  display: grid; place-items: center; font-size: 17px; border: 1px solid var(--border);
+  width: 40px; height: 40px; border-radius: var(--radius-sm); flex: none;
+  background: var(--accent-soft); color: var(--accent-dark);
+  display: grid; place-items: center; font-size: 19px; border: 1px solid var(--accent-2);
 }
-.section .lead { color: var(--text-2); margin: 0 0 22px; font-size: 15.5px; max-width: 760px; line-height: 1.8; }
+.section .lead { color: var(--text-2); margin: 0 0 28px; font-size: 15.5px; max-width: 760px; line-height: 1.85; }
 
 p { margin: 0 0 14px; }
-.text-block p { margin: 0 0 12px; }
+.text-block { max-width: 720px; }
+.text-block p { margin: 0 0 14px; line-height: 1.85; }
 .text-block p:last-child { margin-bottom: 0; }
 
-/* ---------- 提示框（暖色、无蓝） ---------- */
+/* ---------- 提示框（暖色、无蓝、左强调线） ---------- */
 .callout {
-  border-radius: var(--radius-sm); padding: 18px 20px; margin: 18px 0;
+  border-radius: var(--radius-sm); padding: 20px 22px; margin: 20px 0;
   font-size: 14.5px; border: 1px solid var(--border); background: var(--surface);
-  line-height: 1.8;
+  line-height: 1.8; border-left: 4px solid var(--accent-2);
 }
 .callout .ct { font-weight: 600; display: block; margin-bottom: 6px; color: var(--text); font-family: var(--font); }
-.callout.tip { background: var(--accent-soft); border-color: #eadbc8; }
-.callout.warn { background: var(--warning-soft); border-color: #f0e2c4; }
-.callout.info { background: var(--info-soft); border-color: var(--border); }
+.callout.tip { background: var(--accent-soft); border-color: #eadbc8; border-left-color: var(--accent); }
+.callout.warn { background: var(--warning-soft); border-color: #f0e2c4; border-left-color: var(--warning); }
+.callout.info { background: var(--info-soft); border-color: var(--border); border-left-color: var(--muted-2); }
 .callout.tip .ct { color: var(--accent-dark); }
 .callout.warn .ct { color: var(--warning); }
 .callout.info .ct { color: var(--text-2); }
 
 /* ---------- 表格 ---------- */
-.table-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); box-shadow: var(--shadow-sm); }
+.table-wrap { overflow-x: auto; margin: 18px 0; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); box-shadow: var(--shadow-sm); }
 table.tbl { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 14px; }
-table.tbl th, table.tbl td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
-table.tbl th { background: var(--surface-2); font-weight: 600; color: var(--text); white-space: nowrap; font-size: 13px; font-family: var(--font); }
+table.tbl th, table.tbl td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+table.tbl th { background: var(--surface-3); font-weight: 600; color: var(--text); white-space: nowrap; font-size: 13px; font-family: var(--font); }
 table.tbl tr:last-child td { border-bottom: 0; }
 table.tbl tbody tr { transition: background var(--dur) var(--ease); }
 table.tbl tbody tr:hover { background: var(--surface-2); }
@@ -303,18 +305,18 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
 /* ---------- 日行程卡片（编辑式） ---------- */
 .day {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  box-shadow: var(--shadow-sm); margin: 22px 0; overflow: hidden;
+  box-shadow: var(--shadow-sm); margin: 28px 0; overflow: hidden; scroll-margin-top: 115px;
   transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 .day:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
 .day-head {
-  display: flex; align-items: center; gap: 16px; padding: 18px 22px;
+  display: flex; align-items: center; gap: 16px; padding: 20px 24px;
   background: var(--surface-2); border-bottom: 1px solid var(--border); flex-wrap: wrap;
 }
 .day-head .day-no {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--surface); color: var(--accent-dark); border: 1px solid var(--accent-2);
-  display: grid; place-items: center; font-weight: 700; font-size: 14px; flex: none;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent-dark); border: 2px solid var(--accent-2);
+  display: grid; place-items: center; font-weight: 700; font-size: 13px; flex: none;
   font-family: var(--font);
 }
 .day-head .day-title { font-weight: 600; font-size: 17px; color: var(--text); font-family: var(--font-serif); }
@@ -324,22 +326,22 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
   border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px;
   color: var(--text); font-weight: 600; font-family: var(--font);
 }
-.day-body { padding: 10px 22px 18px; }
+.day-body { padding: 14px 24px 20px; }
 .timeline { list-style: none; margin: 10px 0 6px; padding: 0; position: relative; }
-.timeline::before { content: ""; position: absolute; left: 8px; top: 8px; bottom: 8px; width: 1px; background: var(--border-2); }
-.tl-item { position: relative; padding: 9px 0 9px 34px; }
+.timeline::before { content: ""; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 1px; background: var(--border); }
+.tl-item { position: relative; padding: 10px 0 10px 36px; }
 .tl-item::before {
-  content: ""; position: absolute; left: 3px; top: 14px; width: 11px; height: 11px;
+  content: ""; position: absolute; left: 4px; top: 15px; width: 13px; height: 13px;
   border-radius: 50%; background: var(--surface); border: 2px solid var(--accent-2);
   transition: transform var(--dur) var(--ease), background var(--dur) var(--ease);
 }
-.tl-item:hover::before { transform: scale(1.15); background: var(--accent-soft); }
-.tl-item .tl-time { font-weight: 600; color: var(--accent-dark); font-size: 13px; font-family: var(--font); }
-.tl-item .tl-text { font-size: 14.5px; color: var(--text-2); line-height: 1.7; }
-.tl-item .tl-text .place { margin-top: 4px; }
-.tl-item .tl-text .tl-note { display: block; margin-top: 5px; color: var(--text-2); }
-.day-foot { padding: 0 22px 18px; }
-.day-foot .label { font-size: 12px; color: var(--muted); font-weight: 600; margin: 8px 0 4px; letter-spacing: .5px; text-transform: uppercase; font-family: var(--font); }
+.tl-item:hover::before { transform: scale(1.3); background: var(--accent); border-color: var(--accent); }
+.tl-item .tl-time { font-weight: 600; color: var(--accent-dark); font-size: 13px; margin-bottom: 2px; font-family: var(--font); }
+.tl-item .tl-text { font-size: 14.5px; color: var(--text-2); line-height: 1.75; }
+.tl-item .tl-text .place { margin-top: 6px; }
+.tl-item .tl-text .tl-note { display: block; margin-top: 6px; color: var(--muted); font-size: 14px; }
+.day-foot { padding: 0 24px 20px; }
+.day-foot .label { font-size: 12px; color: var(--accent-dark); font-weight: 600; margin: 10px 0 6px; letter-spacing: .5px; text-transform: uppercase; font-family: var(--font); }
 
 /* ---------- 美食卡片 ---------- */
 .food-city { margin: 22px 0; }
@@ -347,11 +349,11 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
 .food-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
 .food-item {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 16px 17px; box-shadow: var(--shadow-sm);
+  padding: 18px 20px; box-shadow: var(--shadow-sm);
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
 .food-item:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent-2); }
-.food-item .fname { font-weight: 600; font-size: 15.5px; color: var(--text); display: flex; align-items: center; gap: 6px; font-family: var(--font); }
+.food-item .fname { font-weight: 600; font-size: 15.5px; color: var(--text); display: flex; align-items: center; gap: 8px; font-family: var(--font); }
 .food-item .fname::before { content: "🍜"; font-size: 14px; opacity: .75; }
 .food-item .fmeta { font-size: 13px; color: var(--muted); margin: 5px 0; }
 .food-item .fprice { color: var(--accent-dark); font-weight: 700; font-size: 14px; font-family: var(--font); }
@@ -359,13 +361,13 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
 .food-item .fnote { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.65; }
 
 /* ---------- 预算汇总卡 ---------- */
-.budget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin: 18px 0; }
-.budget-cell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.budget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 20px 0; }
+.budget-cell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 22px 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease); }
 .budget-cell:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
-.budget-cell::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); }
+.budget-cell::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
 .budget-cell .bk { font-size: 13px; color: var(--muted); font-family: var(--font); }
-.budget-cell .bv { font-size: 22px; font-weight: 700; color: var(--text); margin-top: 6px; font-family: var(--font-serif); }
-.budget-cell .bn { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+.budget-cell .bv { font-size: 24px; font-weight: 700; color: var(--text); margin-top: 8px; font-family: var(--font-serif); }
+.budget-cell .bn { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
 
 /* ---------- 图片画廊（参考截图） ---------- */
 .gallery { margin: 20px 0; }
@@ -441,14 +443,14 @@ table.tbl tbody tr:hover { background: var(--surface-2); }
 
   .fact { min-width: calc(50% - 6px); flex: 1 1 calc(50% - 6px); }
 
-  .section { padding: 34px 0; }
-  .section > h2 { font-size: 20px; }
+  .section { padding: 40px 0; }
+  .section > h2 { font-size: 21px; }
   .section-title { margin: 44px 0 22px; }
   .section-title h2 { font-size: 22px; }
 
-  .day-head { gap: 12px; padding: 16px 18px; }
+  .day-head { gap: 12px; padding: 18px 20px; }
   .day-head .day-km { margin-left: 0; width: 100%; margin-top: 4px; }
-  .day-body, .day-foot { padding-left: 18px; padding-right: 18px; }
+  .day-body, .day-foot { padding-left: 20px; padding-right: 20px; }
 
   .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .food-list { grid-template-columns: 1fr; }
