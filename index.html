@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>旅行手账 · Travel Guides</title>
+  <meta name="description" content="自驾 / 床车 / 充电换电 / 景点预约 / 美食与营地攻略集合" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="#/" style="color:#fff">
+        <span class="logo">🧭</span>
+        <span>旅行手账<small>TRAVEL GUIDES</small></span>
+      </a>
+      <a class="nav-home" href="#/">首页</a>
+    </div>
+  </header>
+
+  <main id="app"><!-- 由 app.js 渲染 --></main>
+
+  <footer class="footer">
+    <div class="wrap">
+      用 ❤️ 手写的多端旅行攻略 · 地点框框点一下即可复制导航 · 托管于 GitHub + Cloudflare Pages
+    </div>
+  </footer>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- 顺序：helpers → 数据文件 → app -->
+  <script src="assets/js/helpers.js"></script>
+  <script src="data/qinggan-2026.js"></script>
+  <!-- 新增攻略：复制 data/qinggan-2026.js 改成你的行程，并在下面加一行 <script src="data/你的文件.js"></script> -->
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
