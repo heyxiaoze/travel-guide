@@ -59,7 +59,7 @@ window.registerGuide({
           { label: '大柴旦翡翠湖', gradient: 'linear-gradient(135deg,#3a8c8c,#7fcdbb)' },
           { label: '祁连草原', gradient: 'linear-gradient(135deg,#8f9a6b,#c5cfa3)' }
         ] },
-        { t: 'map', title: '青甘大环线总览', label: '西宁 → 张掖 → 嘉峪关 → 敦煌 → 大柴旦 → 茶卡 → 青海湖 → 祁连 → 西宁', link: 'https://ditu.amap.com/search?query=%E9%9D%92%E7%94%98%E5%A4%A7%E7%8E%AF%E7%BA%BF' }
+        { t: 'map', title: '青甘大环线总览', label: '西宁 → 张掖 → 嘉峪关 → 敦煌 → 大柴旦 → 茶卡 → 青海湖 → 祁连 → 西宁', center: '97.5,38.5', zoom: 6, link: 'https://ditu.amap.com/search?query=%E9%9D%92%E7%94%98%E5%A4%A7%E7%8E%AF%E7%BA%BF' }
       ]
     },
 
@@ -77,7 +77,7 @@ window.registerGuide({
           ] },
         { t: 'callout', tone: 'info', title: '换电怎么找（G6 京藏）',
           s: '乐道 L60 可用全部蔚来/乐道换电站。G6 京藏“京蒙段”已贯通换电（如 <b>官厅服务区双向、百葛服务区</b>）；城市站覆盖北京、呼和浩特、银川、兰州、西宁。出发前在 <b>乐道/蔚来 App</b> 用“沿途补能”规划，高速服务区换电站 24h 运营；夜间谷价换电能省约 30%。' },
-        { t: 'map', title: '去程路线：大连 → 西宁', label: '沈大 / 沈海 → 丹锡 → 京哈(G1) → 北京绕城 → 京藏(G6) → 西宁', link: 'https://ditu.amap.com/dir?fromtype=bus&from=大连&to=西宁&policy=1' },
+        { t: 'map', title: '去程路线：大连 → 西宁', label: '沈大 / 沈海 → 丹锡 → 京哈(G1) → 北京绕城 → 京藏(G6) → 西宁', center: '111.7,37.8', zoom: 5, link: 'https://ditu.amap.com/dir?fromtype=bus&from=大连&to=西宁&policy=1' },
         { t: 'day', no: 'D0', date: '9/24 周四 19:00', km: '~300km', title: '大连 → 京哈高速服务区',
           items: [
             { time: '19:00', s: '大连出发，满电。走沈大→沈海→丹锡→京哈(G1)。' },
@@ -133,7 +133,7 @@ window.registerGuide({
           { label: '卓尔山', gradient: 'linear-gradient(135deg,#7a8b5a,#b5c49a)' },
           { label: '门源秋色', gradient: 'linear-gradient(135deg,#b8894a,#e6ce9c)' }
         ] },
-        { t: 'map', title: '环线总览：西宁 → 张掖 → 敦煌 → 大柴旦 → 茶卡 → 青海湖 → 祁连 → 西宁', label: '逆时针 8 天路线，点击在地图中查看', link: 'https://ditu.amap.com/search?query=%E9%9D%92%E7%94%98%E5%A4%A7%E7%8E%AF%E7%BA%BF%E8%87%AA%E9%A9%BE' },
+        { t: 'map', title: '环线总览：西宁 → 张掖 → 敦煌 → 大柴旦 → 茶卡 → 青海湖 → 祁连 → 西宁', label: '逆时针 8 天路线，点击在地图中查看', center: '97.5,38.5', zoom: 6, link: 'https://ditu.amap.com/search?query=%E9%9D%92%E7%94%98%E5%A4%A7%E7%8E%AF%E7%BA%BF%E8%87%AA%E9%A9%BE' },
 
         { t: 'day', no: '1', date: '9/27 周日', km: '~350km', title: '西宁 → 张掖（海拔 2200→1500m）',
           items: [
@@ -252,7 +252,7 @@ window.registerGuide({
       icon: '↩️',
       lead: '原路 G6→京哈 返回。<b>10/5–10/7 高速全部免费</b>（国庆免费期，7 座及以下小客车），但 10/7 是返程最高峰；我们 10/5 就出发正好错峰，10/6 夜宿锦州、10/7 上午轻装到家。',
       blocks: [
-        { t: 'map', title: '返程路线：西宁 → 大连', label: 'G6 京藏 → 北京绕城 → G1 京哈 → 沈海/丹锡 → 大连（10/5–10/7 高速免费）', link: 'https://ditu.amap.com/dir?fromtype=bus&from=西宁&to=大连&policy=1' },
+        { t: 'map', title: '返程路线：西宁 → 大连', label: 'G6 京藏 → 北京绕城 → G1 京哈 → 沈海/丹锡 → 大连（10/5–10/7 高速免费）', center: '111.7,37.8', zoom: 5, link: 'https://ditu.amap.com/dir?fromtype=bus&from=西宁&to=大连&policy=1' },
         { t: 'table', head: ['路段（日期）', '公里', '过路费', '补能', '过夜'],
           rows: [
             ['10/5 西宁→兰州→银川→呼和浩特', '~950', '免费', '兰州/银川换电', '呼和浩特服务区'],

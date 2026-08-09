@@ -3,6 +3,11 @@
   var root = document.getElementById('app');
   var esc = window.__esc;
 
+  // 高德地图（Web 端 JS API）配置。key 公开在客户端，建议在
+  // 高德控制台对该 key 设置「域名白名单」为你的 Cloudflare 域名以防滥用。
+  // 若你的 key 是 JS API 2.0 且开启了「安全密钥」，把下面的 securityCode 填上即可自动切到 2.0。
+  var MAP_CONFIG = { key: 'b0601404a7c0a210ba2f898eaa8db2fb', securityCode: '' };
+
   function el(html) {
     var t = document.createElement('template');
     t.innerHTML = html.trim();
@@ -112,14 +117,75 @@
     return '<div class="gallery">' + cap + '<div class="gallery-grid">' + items + '</div></div>';
   }
 
+  var mapSeq = 0;
   function renderMap(b) {
     var title = esc(b.title || '地图');
     var link = b.link ? '<a class="mlink" href="' + esc(b.link) + '" target="_blank" rel="noopener">在地图中打开 →</a>' : '';
+    var center = b.center || '';
+    var zoom = b.zoom || 6;
+    var uid = 'amap-' + (++mapSeq);
     return '<div class="map-card"><div class="map-head"><span class="mt">' + title + '</span>' + link + '</div>' +
-      '<div class="map-body"><div class="map-placeholder">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>' +
-      '<span>' + esc(b.label || '点击右上角在地图 App 中查看路线') + '</span>' +
-      '</div></div></div>';
+      '<div class="map-body">' +
+      '<div class="amap-box" id="' + uid + '" data-center="' + esc(center) + '" data-zoom="' + esc(zoom) + '">' +
+      '<div class="map-loading"><span class="spinner"></span><span>地图加载中…</span></div>' +
+      '</div>' +
+      (b.label ? '<div class="map-note">' + esc(b.label) + '</div>' : '') +
+      '</div></div>';
+  }
+
+  /* ---------- 高德地图懒加载 + 渲染 ---------- */
+  var amapLoading = null;
+  function loadAMap() {
+    if (window.AMap) return Promise.resolve(window.AMap);
+    if (amapLoading) return amapLoading;
+    amapLoading = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      if (MAP_CONFIG.securityCode) {
+        window._AMapSecurityConfig = { securityJsCode: MAP_CONFIG.securityCode };
+        s.src = 'https://webapi.amap.com/maps?v=2.0&key=' + encodeURIComponent(MAP_CONFIG.key);
+      } else {
+        // JS API 1.4.15 仅需 key（无需安全密钥），优先用以保证「只给 key 也能用」
+        s.src = 'https://webapi.amap.com/maps?v=1.4.15&key=' + encodeURIComponent(MAP_CONFIG.key);
+      }
+      s.async = true;
+      s.onload = function () { window.AMap ? resolve(window.AMap) : reject(new Error('AMap undefined')); };
+      s.onerror = function () { reject(new Error('AMap load failed')); };
+      document.head.appendChild(s);
+    });
+    return amapLoading;
+  }
+
+  function buildOneMap(box) {
+    box.setAttribute('data-init', '1');
+    var c = (box.getAttribute('data-center') || '').split(',');
+    var center = [parseFloat(c[0]), parseFloat(c[1])];
+    var zoom = parseInt(box.getAttribute('data-zoom') || '6', 10);
+    loadAMap().then(function (AMap) {
+      try {
+        var map = new AMap.Map(box, { center: center, zoom: zoom, resizeEnable: true });
+        if (map.disableScrollWheelZoom) { try { map.disableScrollWheelZoom(); } catch (e) {} }
+        new AMap.Marker({ position: center, map: map });
+        box.classList.add('ready');
+      } catch (err) {
+        failMap(box);
+      }
+    }).catch(function () { failMap(box); });
+  }
+  function failMap(box) {
+    box.classList.add('map-failed');
+    box.innerHTML = '<div class="map-loading"><span class="map-fail-ic">🗺️</span><span>地图加载失败，请点右上角「在地图中打开」查看路线</span></div>';
+  }
+
+  function initMaps() {
+    var boxes = document.querySelectorAll('.amap-box[data-center]:not([data-init])');
+    if (!boxes.length) return;
+    if (!('IntersectionObserver' in window)) { boxes.forEach(buildOneMap); return; }
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { buildOneMap(e.target); obs.unobserve(e.target); }
+      });
+    }, { rootMargin: '200px 0px' });
+    boxes.forEach(function (b) { obs.observe(b); });
   }
 
   /* ---------- 首页 ---------- */
@@ -241,6 +307,7 @@
     }
     // 子导航高亮 + 入场动效
     setupReveal();
+    initMaps();
     var links = document.querySelectorAll('.subnav a');
     if (links.length) {
       var obs = new IntersectionObserver(function (entries) {
