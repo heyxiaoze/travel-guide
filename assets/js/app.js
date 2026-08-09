@@ -91,10 +91,11 @@
     var guides = window.GUIDE_ORDER.map(function (id) { return window.TRAVEL_GUIDES[id]; });
     var cards = guides.map(function (g) {
       return '<div class="guide-card" data-id="' + esc(g.id) + '">' +
-        '<div class="guide-cover" style="background:' + esc(g.color || 'linear-gradient(135deg,#0f766e,#14918a)') + '">' + esc(g.emoji || '🧭') + '</div>' +
+        '<div class="guide-cover" style="background:' + esc(g.color || 'linear-gradient(135deg,#143150,#2c6aa6)') + '">' + esc(g.emoji || '🧭') + '</div>' +
         '<div class="body"><h3>' + esc(g.title) + '</h3>' +
         '<p class="sub">' + esc(g.subtitle || '') + '</p>' +
         '<div class="chips">' + (g.meta || []).slice(0, 4).map(function (m) { return '<span class="chip">' + esc(m) + '</span>'; }).join('') + '</div>' +
+        '<span class="go">查看攻略 <span class="arrow">→</span></span>' +
         '</div></div>';
     }).join('');
 
@@ -126,15 +127,32 @@
         blocks + '</section>';
     }).join('');
 
-    var meta = (g.meta || []).map(function (m) { return '<span class="chip">' + esc(m) + '</span>'; }).join('');
+    // 面包屑（KKday 路径风格）：首页 › ... › 当前
+    var crumbs = (g.breadcrumb && g.breadcrumb.length) ? g.breadcrumb : [];
+    var crumbHtml = '<nav class="crumbs"><a href="#/">首页</a>' +
+      crumbs.map(function (c, i) {
+        return '<span class="sep">›</span>' + (i === crumbs.length - 1
+          ? '<span class="cur">' + esc(c) + '</span>'
+          : '<span>' + esc(c) + '</span>');
+      }).join('') + '</nav>';
+
+    // 事实条（KKday 行程时长 / 多语言 / 免费取消 风格）
+    var factHtml = (g.facts && g.facts.length) ? '<div class="factbar">' + g.facts.map(function (f) {
+      return '<div class="fact"><span class="fi">' + esc(f.i || '•') + '</span>' +
+        '<span class="fk">' + esc(f.k) + '</span><span class="fv">' + esc(f.v) + '</span></div>';
+    }).join('') + '</div>' : '';
+
+    var badge = g.badge ? '<span class="hero-badge">' + esc(g.badge) + '</span>' : '';
 
     return '' +
       '<div class="guide-hero"><div class="wrap">' +
+        crumbHtml +
+        badge +
         '<div class="cover-row">' +
-          '<div class="emoji" style="background:' + esc(g.color || 'linear-gradient(135deg,#0f766e,#14918a)') + '">' + esc(g.emoji || '🧭') + '</div>' +
+          '<div class="emoji" style="background:' + esc(g.color || 'linear-gradient(135deg,#143150,#2c6aa6)') + '">' + esc(g.emoji || '🧭') + '</div>' +
           '<div><h1>' + esc(g.title) + '</h1>' + (g.subtitle ? '<p class="sub">' + esc(g.subtitle) + '</p>' : '') + '</div>' +
         '</div>' +
-        '<div class="meta-row">' + meta + '</div>' +
+        factHtml +
       '</div></div>' +
       '<nav class="subnav"><div class="wrap">' + subs + '</div></nav>' +
       '<div class="wrap">' + sections + '</div>';
