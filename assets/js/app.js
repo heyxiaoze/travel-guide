@@ -93,11 +93,12 @@
 
   function renderDay(d, id) {
     var items = (d.items || []).map(function (it) {
+      var meta = '<div class="tl-meta"><div class="tl-time">' + esc(it.time || '') + '</div>' + renderTags(it) + '</div>';
       if (it.place) {
-        return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div>' + renderTags(it) +
+        return '<li class="tl-item">' + meta +
           '<div class="tl-text">' + window.P(it.place.name, it.place.copy, it.place.sub) + (it.note ? '<div class="tl-note">' + it.note + '</div>' : '') + '</div></li>';
       }
-      return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div>' + renderTags(it) + '<div class="tl-text">' + it.s + '</div></li>';
+      return '<li class="tl-item">' + meta + '<div class="tl-text">' + it.s + '</div></li>';
     }).join('');
 
     var foot = '';
