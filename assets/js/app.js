@@ -33,6 +33,12 @@
         return renderFood(b);
       case 'budget':
         return renderBudget(b);
+      case 'summary':
+        return renderSummary(b);
+      case 'gallery':
+        return renderGallery(b);
+      case 'map':
+        return renderMap(b);
       default:
         return '';
     }
@@ -84,6 +90,36 @@
       return '<div class="budget-cell"><div class="bk">' + esc(c.k) + '</div><div class="bv">' + esc(c.v) + '</div>' + (c.n ? '<div class="bn">' + esc(c.n) + '</div>' : '') + '</div>';
     }).join('');
     return '<div class="budget-grid">' + cells + '</div>';
+  }
+
+  function renderSummary(b) {
+    var rows = (b.rows || []).map(function (r) {
+      return '<div class="summary-item"><span class="sl">' + esc(r.k) + '</span><span class="sv">' + r.v + '</span></div>';
+    }).join('');
+    return '<div class="summary-panel"><div class="summary-grid">' + rows + '</div></div>';
+  }
+
+  function renderGallery(b) {
+    var items = (b.items || []).map(function (it) {
+      var label = esc(it.label || it.title || '');
+      var grad = it.gradient || 'linear-gradient(135deg,#b8956b,#d4b88a)';
+      if (it.src) {
+        return '<div class="gallery-item"><img src="' + esc(it.src) + '" alt="' + label + '" loading="lazy" /></div>';
+      }
+      return '<div class="gallery-item"><div class="placeholder" style="background:' + grad + '">' + label + '</div></div>';
+    }).join('');
+    var cap = b.caption ? '<div class="gallery-caption">' + b.caption + '</div>' : '';
+    return '<div class="gallery">' + cap + '<div class="gallery-grid">' + items + '</div></div>';
+  }
+
+  function renderMap(b) {
+    var title = esc(b.title || '地图');
+    var link = b.link ? '<a class="mlink" href="' + esc(b.link) + '" target="_blank" rel="noopener">在地图中打开 →</a>' : '';
+    return '<div class="map-card"><div class="map-head"><span class="mt">' + title + '</span>' + link + '</div>' +
+      '<div class="map-body"><div class="map-placeholder">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>' +
+      '<span>' + esc(b.label || '点击右上角在地图 App 中查看路线') + '</span>' +
+      '</div></div></div>';
   }
 
   /* ---------- 首页 ---------- */

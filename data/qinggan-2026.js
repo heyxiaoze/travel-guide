@@ -6,7 +6,7 @@ window.registerGuide({
   title: '青甘大环线 · 国庆错峰床车自驾',
   subtitle: '大连 ⇄ 西宁 ⇄ 青甘环线 · 2026/09/24 晚出发，10/07 午到家',
   emoji: '🏜️',
-  color: 'linear-gradient(135deg,#143150 0%,#2c6aa6 55%,#ff6a3d 130%)',
+  color: 'linear-gradient(135deg,#b8956b 0%,#d4b88a 55%,#f5efe6 130%)',
   breadcrumb: ['中国', '西北', '青甘大环线'],
   badge: '🗓️ 2026 国庆错峰版',
   facts: [
@@ -40,7 +40,26 @@ window.registerGuide({
           { name: '西宁', copy: '西宁市', sub: '9/26 晚抵达·适应一晚' },
           { name: '逆时针环线', copy: '张掖 嘉峪关 敦煌 大柴旦 茶卡 青海湖 祁连', sub: '9/27–10/4' },
           { name: '大连（家）', copy: '大连市', sub: '10/7 中午到家' }
-        ] }
+        ] },
+        { t: 'summary', rows: [
+          { k: '出行时间', v: '2026/09/24 19:00 – 10/07 12:00' },
+          { k: '总天数', v: '14 天 13 晚' },
+          { k: '总里程', v: '约 7400 km' },
+          { k: '出行方式', v: '单人自驾 · 全程睡车里' },
+          { k: '车辆', v: '乐道 L60 85 度电（换电+快充）' },
+          { k: '路线策略', v: '逆时针错峰 · 先低海拔后高海拔' },
+          { k: '过路费', v: '约 ¥1470（10/1–10/7 高速免费）' },
+          { k: '人均预算', v: '¥5500 – 6300' }
+        ] },
+        { t: 'gallery', caption: '沿途风光预览（ placeholder，后续可替换为实拍图）', items: [
+          { label: '张掖七彩丹霞', gradient: 'linear-gradient(135deg,#c06c4f,#e8a87c)' },
+          { label: '敦煌鸣沙山', gradient: 'linear-gradient(135deg,#d4b88a,#f5efe6)' },
+          { label: '青海湖', gradient: 'linear-gradient(135deg,#4a7c8f,#8fb8c9)' },
+          { label: '茶卡盐湖', gradient: 'linear-gradient(135deg,#8e9eab,#eef2f3)' },
+          { label: '大柴旦翡翠湖', gradient: 'linear-gradient(135deg,#3a8c8c,#7fcdbb)' },
+          { label: '祁连草原', gradient: 'linear-gradient(135deg,#8f9a6b,#c5cfa3)' }
+        ] },
+        { t: 'map', title: '青甘大环线总览', label: '西宁 → 张掖 → 嘉峪关 → 敦煌 → 大柴旦 → 茶卡 → 青海湖 → 祁连 → 西宁', link: 'https://ditu.amap.com/search?query=%E9%9D%92%E7%94%98%E5%A4%A7%E7%8E%AF%E7%BA%BF' }
       ]
     },
 
@@ -58,6 +77,7 @@ window.registerGuide({
           ] },
         { t: 'callout', tone: 'info', title: '换电怎么找（G6 京藏）',
           s: '乐道 L60 可用全部蔚来/乐道换电站。G6 京藏“京蒙段”已贯通换电（如 <b>官厅服务区双向、百葛服务区</b>）；城市站覆盖北京、呼和浩特、银川、兰州、西宁。出发前在 <b>乐道/蔚来 App</b> 用“沿途补能”规划，高速服务区换电站 24h 运营；夜间谷价换电能省约 30%。' },
+        { t: 'map', title: '去程路线：大连 → 西宁', label: '沈大 / 沈海 → 丹锡 → 京哈(G1) → 北京绕城 → 京藏(G6) → 西宁', link: 'https://ditu.amap.com/dir?fromtype=bus&from=大连&to=西宁&policy=1' },
         { t: 'day', no: 'D0', date: '9/24 周四 19:00', km: '~300km', title: '大连 → 京哈高速服务区',
           items: [
             { time: '19:00', s: '大连出发，满电。走沈大→沈海→丹锡→京哈(G1)。' },
@@ -105,6 +125,15 @@ window.registerGuide({
              '• <b>环线前半 9/27–9/30（国庆前）</b>：西宁→张掖→嘉峪关→敦煌→大柴旦，高速照常收费约 ¥430。<br>' +
              '• <b>环线后半 10/1–10/4 + 返程 10/5–10/7</b>：全程免费，省约 ¥1950。<br>' +
              '合计高速费仅约 <b>¥1470</b>（原估算 ¥3400），光过路费就省近 ¥2000。' },
+        { t: 'gallery', caption: '环线高光（逆时针：先甘肃低海拔，再青海高海拔）', items: [
+          { label: '嘉峪关关城', gradient: 'linear-gradient(135deg,#8b7d6b,#c4b9a8)' },
+          { label: '莫高窟', gradient: 'linear-gradient(135deg,#b8956b,#e6d2b5)' },
+          { label: '水上雅丹', gradient: 'linear-gradient(135deg,#6b8b8b,#a8c5c5)' },
+          { label: 'U型公路', gradient: 'linear-gradient(135deg,#7d7d7d,#b5b5b5)' },
+          { label: '卓尔山', gradient: 'linear-gradient(135deg,#7a8b5a,#b5c49a)' },
+          { label: '门源秋色', gradient: 'linear-gradient(135deg,#b8894a,#e6ce9c)' }
+        ] },
+        { t: 'map', title: '环线总览：西宁 → 张掖 → 敦煌 → 大柴旦 → 茶卡 → 青海湖 → 祁连 → 西宁', label: '逆时针 8 天路线，点击在地图中查看', link: 'https://ditu.amap.com/search?query=%E9%9D%92%E7%94%98%E5%A4%A7%E7%8E%AF%E7%BA%BF%E8%87%AA%E9%A9%BE' },
 
         { t: 'day', no: '1', date: '9/27 周日', km: '~350km', title: '西宁 → 张掖（海拔 2200→1500m）',
           items: [
@@ -223,6 +252,7 @@ window.registerGuide({
       icon: '↩️',
       lead: '原路 G6→京哈 返回。<b>10/5–10/7 高速全部免费</b>（国庆免费期，7 座及以下小客车），但 10/7 是返程最高峰；我们 10/5 就出发正好错峰，10/6 夜宿锦州、10/7 上午轻装到家。',
       blocks: [
+        { t: 'map', title: '返程路线：西宁 → 大连', label: 'G6 京藏 → 北京绕城 → G1 京哈 → 沈海/丹锡 → 大连（10/5–10/7 高速免费）', link: 'https://ditu.amap.com/dir?fromtype=bus&from=西宁&to=大连&policy=1' },
         { t: 'table', head: ['路段（日期）', '公里', '过路费', '补能', '过夜'],
           rows: [
             ['10/5 西宁→兰州→银川→呼和浩特', '~950', '免费', '兰州/银川换电', '呼和浩特服务区'],
