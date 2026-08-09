@@ -10,7 +10,7 @@
   }
 
   /* ---------- 区块渲染 ---------- */
-  function renderBlock(b) {
+  function renderBlock(b, dayId) {
     switch (b.t) {
       case 'text':
         if (Array.isArray(b.s)) return '<div class="text-block">' + b.s.map(function (p) { return '<p>' + p + '</p>'; }).join('') + '</div>';
@@ -28,7 +28,7 @@
         }).join('');
         return '<div class="table-wrap"><table class="tbl"><thead>' + head + '</thead><tbody>' + rows + '</tbody></table></div>';
       case 'day':
-        return renderDay(b);
+        return renderDay(b, dayId);
       case 'food':
         return renderFood(b);
       case 'budget':
@@ -42,7 +42,7 @@
     }
   }
 
-  function renderDay(d) {
+  function renderDay(d, id) {
     var items = (d.items || []).map(function (it) {
       if (it.place) {
         return '<li class="tl-item"><div class="tl-time">' + esc(it.time || '') + '</div>' +
@@ -57,7 +57,7 @@
     if (d.note) foot += '<div class="day-foot"><div class="callout info" style="margin:8px 0 0">' + d.note + '</div></div>';
 
     return '' +
-      '<div class="day">' +
+      '<div class="day"' + (id ? ' id="' + esc(id) + '"' : '') + '>' +
         '<div class="day-head">' +
           '<div class="day-no">' + esc(d.no) + '</div>' +
           '<div><div class="day-title">' + esc(d.title) + '</div>' +
@@ -143,12 +143,22 @@
     var g = window.TRAVEL_GUIDES[id];
     if (!g) return '<div class="wrap"><p>未找到该攻略。</p><a href="#/">← 返回首页</a></div>';
 
-    var subs = (g.sections || []).map(function (s, i) {
-      return '<a href="#sec-' + i + '" data-sec="' + i + '">' + esc(s.title) + '</a>';
+    // 收集所有 day 块（跨 section），分配全局唯一序号，避免 去程D1 与 环线day1 重复
+    var days = [];
+    (g.sections || []).forEach(function (s) {
+      (s.blocks || []).forEach(function (b) {
+        if (b.t === 'day') days.push({ no: b.no, title: b.title });
+      });
+    });
+    var subs = days.map(function (d, i) {
+      return '<a href="#day-' + i + '" data-day="' + i + '" title="' + esc(d.title || '') + '">' + esc(d.no) + '</a>';
     }).join('');
 
+    var dayIdx = 0;
     var sections = (g.sections || []).map(function (s, i) {
-      var blocks = (s.blocks || []).map(renderBlock).join('');
+      var blocks = (s.blocks || []).map(function (b) {
+        return renderBlock(b, b.t === 'day' ? 'day-' + dayIdx++ : null);
+      }).join('');
       return '<section class="section reveal" id="sec-' + i + '">' +
         '<h2><span class="ic">' + (s.icon || '•') + '</span>' + esc(s.title) + '</h2>' +
         (s.lead ? '<p class="lead">' + s.lead + '</p>' : '') +
@@ -235,12 +245,12 @@
         entries.forEach(function (e) {
           if (e.isIntersecting) {
             links.forEach(function (l) { l.classList.remove('active'); });
-            var act = document.querySelector('.subnav a[data-sec="' + e.target.id.split('-')[1] + '"]');
+            var act = document.querySelector('.subnav a[data-day="' + e.target.id.split('-')[1] + '"]');
             if (act) act.classList.add('active');
           }
         });
-      }, { rootMargin: '-70px 0px -70% 0px' });
-      document.querySelectorAll('.section').forEach(function (s) { obs.observe(s); });
+      }, { rootMargin: '-70px 0px -65% 0px' });
+      document.querySelectorAll('.day').forEach(function (s) { obs.observe(s); });
     }
   }
 
@@ -248,6 +258,19 @@
   document.addEventListener('click', function (e) {
     var card = e.target.closest('.guide-card');
     if (card) { location.hash = '#/guide/' + card.getAttribute('data-id'); }
+  });
+
+  // 子导航点击：平滑滚动到对应 day，避免 href=#day-N 触发 router 跳回首页
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('.subnav a');
+    if (!link) return;
+    e.preventDefault();
+    var target = document.getElementById(link.getAttribute('href').replace('#', ''));
+    if (!target) return;
+    var y = target.getBoundingClientRect().top + window.scrollY - 110;
+    window.scrollTo({ top: y < 0 ? 0 : y, behavior: 'smooth' });
+    document.querySelectorAll('.subnav a').forEach(function (l) { l.classList.remove('active'); });
+    link.classList.add('active');
   });
 
   // 地点复制
