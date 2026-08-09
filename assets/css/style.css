@@ -291,6 +291,25 @@ h1, h2, h3, h4 { color: var(--text); font-family: var(--font); letter-spacing: -
 .callout.info { background: var(--surface-2); border-color: var(--border); }
 .callout.info .ct { color: var(--text-2); }
 
+/* ---------- 要点卡片（独立成块的①②③） ---------- */
+.points-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.point-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 11px 14px;
+}
+.point-num {
+  font-weight: 700; color: var(--accent); font-size: 14px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  width: 24px; height: 24px; border-radius: 50%; flex: none;
+  display: grid; place-items: center; flex-shrink: 0;
+  font-family: var(--font);
+}
+.point-content { flex: 1; min-width: 0; }
+.point-k { font-weight: 600; color: var(--text); font-size: 13.5px; margin-bottom: 2px; }
+.point-v { color: var(--text-2); font-size: 13px; line-height: 1.65; }
+
 /* ========== Tables ========== */
 .table-wrap {
   overflow-x: auto; margin: 12px 0; border: 1px solid var(--border);

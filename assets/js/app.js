@@ -21,6 +21,8 @@
         return '<div class="place-row">' + window.P(b.name, b.copy, b.sub) + '</div>';
       case 'places':
         return '<div class="place-row">' + window.Plist(b.items) + '</div>';
+      case 'points':
+        return renderPoints(b);
       case 'table':
         var head = '<tr>' + b.head.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>';
         var rows = b.rows.map(function (r) {
@@ -40,6 +42,19 @@
       default:
         return '';
     }
+  }
+
+  /* ---------- 要点卡片（替代长 callout 的① ② ③串段） ---------- */
+  function renderPoints(p) {
+    var nums = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+    return '<div class="points-list">' + (p.items || []).map(function (it, i) {
+      return '<div class="point-item">' +
+        '<span class="point-num">' + (nums[i] || (i + 1)) + '</span>' +
+        '<div class="point-content">' +
+          '<div class="point-k">' + esc(it.k) + '</div>' +
+          '<div class="point-v">' + it.v + '</div>' +
+        '</div></div>';
+    }).join('') + '</div>';
   }
 
   function renderDay(d, id) {
