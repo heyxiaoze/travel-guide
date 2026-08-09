@@ -91,7 +91,7 @@
     var guides = window.GUIDE_ORDER.map(function (id) { return window.TRAVEL_GUIDES[id]; });
     var cards = guides.map(function (g) {
       return '<div class="guide-card" data-id="' + esc(g.id) + '">' +
-        '<div class="guide-cover" style="background:' + esc(g.color || 'linear-gradient(135deg,#143150,#2c6aa6)') + '">' + esc(g.emoji || '🧭') + '</div>' +
+        '<div class="guide-cover">' + esc(g.emoji || '🧭') + '</div>' +
         '<div class="body"><h3>' + esc(g.title) + '</h3>' +
         '<p class="sub">' + esc(g.subtitle || '') + '</p>' +
         '<div class="chips">' + (g.meta || []).slice(0, 4).map(function (m) { return '<span class="chip">' + esc(m) + '</span>'; }).join('') + '</div>' +
@@ -149,7 +149,7 @@
         crumbHtml +
         badge +
         '<div class="cover-row">' +
-          '<div class="emoji" style="background:' + esc(g.color || 'linear-gradient(135deg,#143150,#2c6aa6)') + '">' + esc(g.emoji || '🧭') + '</div>' +
+          '<div class="emoji">' + esc(g.emoji || '🧭') + '</div>' +
           '<div><h1>' + esc(g.title) + '</h1>' + (g.subtitle ? '<p class="sub">' + esc(g.subtitle) + '</p>' : '') + '</div>' +
         '</div>' +
         factHtml +
