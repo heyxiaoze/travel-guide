@@ -1,41 +1,32 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>旅行手账 · Travel Guides</title>
-  <meta name="description" content="自驾 / 床车 / 充电换电 / 景点预约 / 美食与营地攻略集合" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" />
-  <link rel="stylesheet" href="assets/css/style.css" />
-</head>
-<body>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="#/">
-        <span class="logo">🧭</span>
-        <span>旅行手账<small>TRAVEL GUIDES</small></span>
-      </a>
-      <a class="nav-home" href="#/">首页</a>
-    </div>
-  </header>
-
-  <main id="app"><!-- 由 app.js 渲染 --></main>
-
-  <footer class="footer">
-    <div class="wrap">
-      用 ❤️ 手写的多端旅行攻略 · 地点框框点一下即可复制导航 · 托管于 GitHub + Cloudflare Pages
-    </div>
-  </footer>
-
-  <div id="toast" class="toast"></div>
-
-  <!-- 顺序：helpers → 数据文件 → app -->
-  <script src="assets/js/helpers.js"></script>
-  <script src="data/qinggan-2026.js"></script>
-  <!-- 新增攻略：复制 data/qinggan-2026.js 改成你的行程，并在下面加一行 <script src="data/你的文件.js"></script> -->
-  <script src="data/chuanyu-2026.js"></script>
-  <script src="assets/js/app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>旅行日志 · Travel Journal</title>
+    <meta name="description" content="个人旅行日志：记录路线、营地、门票与补能，收藏每一次出发" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          const stored = localStorage.getItem("travel-journal-theme");
+          const prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          const dark =
+            stored === "dark" || (stored !== "light" && prefersDark);
+          document.documentElement.classList.toggle("dark", dark);
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

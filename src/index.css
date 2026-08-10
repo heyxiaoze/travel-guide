@@ -1,0 +1,255 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 222 30% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 30% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 30% 12%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 30% 96%;
+    --secondary-foreground: 222 30% 18%;
+
+    --muted: 210 30% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 95%;
+    --accent-foreground: 222 30% 18%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 56% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 32 90% 52%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 211 90% 48%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 214 25% 90%;
+    --input: 214 25% 90%;
+    --ring: 262 83% 58%;
+
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 222 30% 8%;
+    --foreground: 210 20% 96%;
+
+    --card: 222 28% 11%;
+    --card-foreground: 210 20% 96%;
+
+    --popover: 222 28% 11%;
+    --popover-foreground: 210 20% 96%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 24% 18%;
+    --secondary-foreground: 210 20% 96%;
+
+    --muted: 217 24% 16%;
+    --muted-foreground: 215 18% 65%;
+
+    --accent: 217 24% 20%;
+    --accent-foreground: 210 20% 96%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 50% 46%;
+    --success-foreground: 222 30% 8%;
+
+    --warning: 32 90% 56%;
+    --warning-foreground: 222 30% 8%;
+
+    --info: 211 90% 56%;
+    --info-foreground: 222 30% 8%;
+
+    --border: 217 24% 20%;
+    --input: 217 24% 22%;
+    --ring: 262 83% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* 首屏容器：读取浏览器高度并占满（减去 sticky Header 的 60px）。
+   section[1] 自适应剩余空间、section[2] 固定 220px。
+   section[3] 攻略网格在本容器之外，首屏不显示但滚动后可见。 */
+.home-viewport {
+  height: calc(100vh - 60px);
+  height: calc(100dvh - 60px);
+  position: relative; /* section[2] 绝对定位于此容器内 */
+}
+.home-viewport > section:nth-of-type(1) {
+  height: 100%; /* 占满整个视口高度（= 原 section[1] + section[2] 之和） */
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  padding-bottom: 200px; /* 底部留出空间，容纳浮起的 section[2] */
+  overflow: hidden; /* 收敛模糊色块，不溢出 */
+}
+.home-viewport > section:nth-of-type(2) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  /* 透明磨砂玻璃：半透明底色 + 背后内容模糊 */
+  background: hsl(var(--background) / 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+}
+
+/* 点阵背景：12px 间距的小圆点，颜色取自 foreground 的 15% 透明度。 */
+.bg-dot-pattern {
+  background-image: radial-gradient(hsl(var(--foreground) / 0.15) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+/* ===== animata Roll Text（导航文字滚动效果） ===== */
+@layer components {
+  .roll-text {
+    --roll-duration: 450ms;
+    --roll-duration-reduced: 150ms;
+    --roll-ease: cubic-bezier(0.77, 0, 0.175, 1);
+    --roll-line-height: 1.15;
+    font-kerning: none;
+    line-height: var(--roll-line-height);
+  }
+
+  .roll-text:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+
+  .roll-text__track {
+    display: inline;
+    line-height: inherit;
+    white-space: pre;
+  }
+
+  .roll-unit {
+    position: relative;
+    display: inline-grid;
+    overflow: hidden;
+    vertical-align: baseline;
+    font-kerning: none;
+    line-height: inherit;
+  }
+
+  .roll-unit__sizer,
+  .roll-unit__stack {
+    grid-area: 1 / 1;
+    line-height: inherit;
+  }
+
+  .roll-unit__sizer {
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
+    white-space: pre;
+  }
+
+  .roll-unit__stack {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    white-space: pre;
+    transform: translateY(0);
+  }
+
+  .roll-unit__line {
+    display: block;
+    line-height: inherit;
+    white-space: inherit;
+  }
+
+  @keyframes roll-stack-open {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-50%);
+    }
+  }
+
+  .roll-text--animating .roll-unit__stack {
+    animation: roll-stack-open var(--roll-unit-duration, var(--roll-duration))
+      var(--roll-ease) var(--roll-delay, 0ms) forwards;
+  }
+
+  .roll-text--open:not(.roll-text--animating) .roll-unit__stack {
+    transform: translateY(-50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roll-text--animating .roll-unit__stack {
+      animation-duration: var(--roll-duration-reduced);
+    }
+  }
+}
+
+/* 模糊色块背景：色块缩放呼吸动画（animata blurry-blob）。 */
+@keyframes pop-blob {
+  0% {
+    transform: scale(1);
+  }
+  33% {
+    transform: scale(1.2);
+  }
+  66% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@layer utilities {
+  .animate-pop-blob {
+    animation: pop-blob 5s infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-pop-blob {
+      animation: none;
+    }
+  }
+}

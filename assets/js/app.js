@@ -112,7 +112,7 @@
           '<div class="day-no">' + esc(d.no) + '</div>' +
           '<div><div class="day-title">' + esc(d.title) + '</div>' +
           (d.date ? '<div class="day-date">' + esc(d.date) + '</div>' : '') + '</div>' +
-          (d.km ? '<div class="day-km">🚗 ' + esc(d.km) + '</div>' : '') +
+          (d.km ? '<div class="day-km"><i class="ph ph-car"></i> ' + esc(d.km) + '</div>' : '') +
         '</div>' +
         '<div class="day-body"><ul class="timeline">' + items + '</ul></div>' +
         foot +
@@ -122,8 +122,8 @@
   function renderFood(f) {
     var cards = (f.items || []).map(function (i) {
       return '<div class="food-item">' +
-        '<div class="fname">' + esc(i.name) + '</div>' +
-        (i.addr ? '<div class="fmeta">📍 ' + esc(i.addr) + '</div>' : '') +
+        '<div class="fname"><i class="ph ph-fork-knife"></i>' + esc(i.name) + '</div>' +
+        (i.addr ? '<div class="fmeta"><i class="ph ph-map-pin"></i> ' + esc(i.addr) + '</div>' : '') +
         (i.price ? '<div class="fprice">' + esc(i.price) + '</div>' : '') +
         (i.src ? '<div class="fsrc">来源：' + esc(i.src) + '</div>' : '') +
         (i.note ? '<div class="fnote">' + esc(i.note) + '</div>' : '') +
@@ -160,30 +160,76 @@
     return '<div class="gallery">' + cap + '<div class="gallery-grid">' + items + '</div></div>';
   }
 
-  /* ---------- 首页 ---------- */
+  /* ---------- 首页（Dashboard 风格） ---------- */
+  function countPlaces(guide) {
+    var n = 0;
+    (guide.sections || []).forEach(function (s) {
+      (s.blocks || []).forEach(function (b) {
+        if (b.t === 'place') n += 1;
+        if (b.t === 'places') n += (b.items || []).length;
+        if (b.t === 'day') {
+          (b.items || []).forEach(function (it) { if (it.place) n += 1; });
+          if (b.sleep) n += 1;
+          if (b.eat) n += (b.eat || []).length;
+        }
+      });
+    });
+    return n;
+  }
+  function extractDate(subtitle) {
+    var m = (subtitle || '').match(/(\d{4}[\/\-\.]\d{1,2}[\/\-\.]\d{1,2}|\d{1,2}[\/\-]\d{1,2}|\d{1,2}月\d{1,2}日?)/);
+    return m ? m[1] : '';
+  }
+
   function renderHome() {
     var guides = window.GUIDE_ORDER.map(function (id) { return window.TRAVEL_GUIDES[id]; });
-    var cards = guides.map(function (g) {
+    var totalDays = 0, totalPlaces = 0;
+    guides.forEach(function (g) {
+      totalDays += (g.sections || []).reduce(function (acc, s) {
+        return acc + (s.blocks || []).filter(function (b) { return b.t === 'day'; }).length;
+      }, 0);
+      totalPlaces += countPlaces(g);
+    });
+    var latest = guides[0];
+    var latestDate = latest ? (extractDate(latest.subtitle) || '近期') : '-';
+
+    var cards = guides.map(function (g, i) {
+      var days = (g.sections || []).reduce(function (acc, s) {
+        return acc + (s.blocks || []).filter(function (b) { return b.t === 'day'; }).length;
+      }, 0);
+      var places = countPlaces(g);
       return '<div class="guide-card reveal" data-id="' + esc(g.id) + '">' +
-        '<div class="guide-cover">' + esc(g.emoji || '🧭') + '</div>' +
-        '<div class="body"><h3>' + esc(g.title) + '</h3>' +
-        '<p class="sub">' + esc(g.subtitle || '') + '</p>' +
-        '<div class="chips">' + (g.meta || []).slice(0, 4).map(function (m) { return '<span class="chip">' + esc(m) + '</span>'; }).join('') + '</div>' +
-        '<span class="go">查看攻略 <span class="arrow">→</span></span>' +
+        '<div class="guide-cover cover-' + (i % 2) + '">' + (g.emoji || '<i class="ph ph-fill ph-compass"></i>') + '</div>' +
+        '<div class="guide-body">' +
+          '<div class="guide-meta-top">' + days + ' 天<span class="dot"></span>' + places + ' 地点</div>' +
+          '<h3>' + esc(g.title) + '</h3>' +
+          '<p class="guide-sub">' + esc(g.subtitle || '') + '</p>' +
+          '<div class="chips">' +
+            (g.meta || []).slice(0, 3).map(function (m) { return '<span class="chip">' + esc(m) + '</span>'; }).join('') +
+          '</div>' +
+          '<span class="guide-go">查看攻略 <span class="arrow">→</span></span>' +
         '</div></div>';
     }).join('');
 
     return '' +
       '<header class="hero"><div class="wrap">' +
-        '<span class="eyebrow hero-anim d1">🧭 旅行手账 · Travel Guides</span>' +
-        '<h1 class="hero-anim d2">自驾床车 × 充换电 × 错峰避堵，<br>一站收藏你的旅行攻略</h1>' +
-        '<p class="hero-anim d3">从大连到青甘大环线：路线、过路费、换电点、景点预约、单人美食与免费营地，全部按日期排好。地点小框框点一下即可复制，直接粘进高德 / 百度导航。</p>' +
-        '<div class="cta-row hero-anim d4">' +
-          '<a class="cta" href="#guides">浏览全部攻略</a>' +
-          (guides.length ? '<a class="cta ghost" href="#/guide/' + esc(guides[0].id) + '">直接看青甘大环线 →</a>' : '') +
+        '<div class="hero-inner hero-anim d1">' +
+          '<span class="eyebrow">旅行日志 · Travel Journal</span>' +
+          '<h1>把每次出发，<br>都变成可回看的记录</h1>' +
+          '<p class="hero-lead">路线、营地、门票、补能、美食与备忘——地点框框点一下即可复制，直接粘进高德 / 百度导航。</p>' +
+          '<div class="hero-actions">' +
+            '<a class="btn btn-primary" href="#guides">浏览全部攻略</a>' +
+            (guides.length ? '<a class="btn btn-ghost" href="#/guide/' + esc(guides[0].id) + '">最新一篇 →</a>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="meta-strip hero-anim d2">' +
+          '<div class="meta-item"><span class="meta-k">攻略</span><span class="meta-v">' + guides.length + '</span></div>' +
+          '<div class="meta-item"><span class="meta-k">累计天数</span><span class="meta-v">' + totalDays + '</span></div>' +
+          '<div class="meta-item"><span class="meta-k">地点</span><span class="meta-v">' + totalPlaces + '</span></div>' +
+          '<div class="meta-item"><span class="meta-k">最近出发</span><span class="meta-v">' + esc(latestDate) + '</span></div>' +
         '</div>' +
       '</div></header>' +
-      '<div class="wrap"><div class="section-title"><h2>全部攻略</h2><span class="line"></span></div>' +
+      '<div class="wrap"><div class="section-head"><h2>全部攻略</h2><span class="count">' + guides.length + ' 篇</span></div>' +
       (guides.length ? '<div class="guide-grid" id="guides">' + cards + '</div>' : '<div class="empty-note">还没有攻略，把数据文件放进 <code>data/</code> 并在 <code>index.html</code> 引入即可。</div>') +
       '</div>';
   }
@@ -210,7 +256,7 @@
         return renderBlock(b, b.t === 'day' ? 'day-' + dayIdx++ : null);
       }).join('');
       return '<section class="section reveal" id="sec-' + i + '">' +
-        '<h2><span class="ic">' + (s.icon || '•') + '</span>' + esc(s.title) + '</h2>' +
+        '<h2><span class="ic">' + (s.icon || '<i class="ph ph-circle"></i>') + '</span>' + esc(s.title) + '</h2>' +
         (s.lead ? '<p class="lead">' + s.lead + '</p>' : '') +
         blocks + '</section>';
     }).join('');
@@ -226,18 +272,18 @@
 
     // 事实条（KKday 行程时长 / 多语言 / 免费取消 风格）
     var factHtml = (g.facts && g.facts.length) ? '<div class="factbar">' + g.facts.map(function (f) {
-      return '<div class="fact"><span class="fi">' + esc(f.i || '•') + '</span>' +
+      return '<div class="fact"><span class="fi">' + (f.i || '<i class="ph ph-circle"></i>') + '</span>' +
         '<span class="fk">' + esc(f.k) + '</span><span class="fv">' + esc(f.v) + '</span></div>';
     }).join('') + '</div>' : '';
 
-    var badge = g.badge ? '<span class="hero-badge">' + esc(g.badge) + '</span>' : '';
+    var badge = g.badge ? '<span class="hero-badge">' + g.badge + '</span>' : '';
 
     return '' +
       '<div class="guide-hero"><div class="wrap">' +
         crumbHtml +
         badge +
         '<div class="cover-row">' +
-          '<div class="emoji">' + esc(g.emoji || '🧭') + '</div>' +
+          '<div class="emoji">' + (g.emoji || '<i class="ph ph-fill ph-compass"></i>') + '</div>' +
           '<div><h1>' + esc(g.title) + '</h1>' + (g.subtitle ? '<p class="sub">' + esc(g.subtitle) + '</p>' : '') + '</div>' +
         '</div>' +
         factHtml +
