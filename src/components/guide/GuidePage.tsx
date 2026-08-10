@@ -66,11 +66,11 @@ export function GuidePage() {
   const { isAdmin, loading: authLoading } = useAuth();
   const [editing, setEditing] = useState(false);
 
-  if (guide && editing && isAdmin) {
-    return <GuideEditor guide={guide} onClose={() => setEditing(false)} />;
-  }
-
   // Flatten day blocks across all sections for the subnav + anchor ids.
+  // Computed BEFORE the early returns below so that every hook is called
+  // unconditionally (Rules of Hooks). Previously `activeDay` was declared
+  // AFTER the edit-mode early return, so toggling edit changed the hook
+  // count between renders and crashed React (#300 / white screen).
   const days: { index: number; no: string; title: string }[] = [];
   if (guide) {
     let di = 0;
@@ -88,7 +88,8 @@ export function GuidePage() {
     days[0] ? String(days[0].index) : ""
   );
 
-  // Scroll-spy: highlight the day currently in view.
+  // Scroll-spy: highlight the day currently in view. Declared BEFORE the
+  // edit-mode early return so it is called on every render (Rules of Hooks).
   useEffect(() => {
     if (!guide || days.length === 0) return;
     const els = Array.from(
@@ -112,6 +113,10 @@ export function GuidePage() {
     els.forEach((el) => obs.observe(el));
     return () => obs.disconnect();
   }, [guide, days.length]);
+
+  if (guide && editing && isAdmin) {
+    return <GuideEditor guide={guide} onClose={() => setEditing(false)} />;
+  }
 
   const scrollToDay = (index: number) => {
     const el = document.getElementById(`day-${index}`);
