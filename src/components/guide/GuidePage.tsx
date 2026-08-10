@@ -7,12 +7,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyTitle, EmptyActions } from "@/components/ui/empty";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RichText } from "@/components/RichText";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
+import { GuideEditor } from "./GuideEditor";
 import { TRAVEL_GUIDES } from "@/data/registry";
+import { useAuth } from "@/lib/auth";
 import type { Guide, Section } from "@/types/guide";
 
 // Header height (h-[60px]) + sticky subnav (~52px) + breathing room.
@@ -61,6 +63,12 @@ function FactBar({ guide }: { guide: Guide }) {
 export function GuidePage() {
   const { id } = useParams();
   const guide = id ? TRAVEL_GUIDES[id] : undefined;
+  const { isAdmin, loading: authLoading } = useAuth();
+  const [editing, setEditing] = useState(false);
+
+  if (guide && editing && isAdmin) {
+    return <GuideEditor guide={guide} onClose={() => setEditing(false)} />;
+  }
 
   // Flatten day blocks across all sections for the subnav + anchor ids.
   const days: { index: number; no: string; title: string }[] = [];
@@ -179,6 +187,13 @@ export function GuidePage() {
           {guide.badge && (
             <div className="inline-flex w-fit items-center gap-1.5 rounded-full border bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
               <RichText value={guide.badge} iconClassName="size-3.5 text-primary" />
+            </div>
+          )}
+          {isAdmin && !authLoading && !editing && (
+            <div className="flex justify-end">
+              <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
+                编辑攻略
+              </Button>
             </div>
           )}
         </div>
