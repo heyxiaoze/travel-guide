@@ -15,3 +15,6 @@ dist/
 # 迁移/同步脚本的临时产物与本地内容仓库工作副本（真实内容在独立 git 仓库）
 .migrate-tmp-*.mjs
 travel-guide-content/
+
+# Vite 加载配置时生成的临时文件（vite.config.ts.timestamp-*.mjs）
+vite.config.ts.timestamp-*.mjs
