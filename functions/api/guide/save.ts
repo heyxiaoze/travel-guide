@@ -1,11 +1,11 @@
 // POST /api/guide/save { guide } -> admin-gated. Writes guides/<id>.json and
 // upserts guides/index.json in the content repo, then triggers a Deploy Hook.
-import { getCookie, verifySession, json } from "../_lib/auth";
+import { getCookie, verifySession, json } from "../../_lib/auth";
 import {
   writeGuide,
   upsertIndexEntry,
   triggerDeploy,
-} from "../_lib/github";
+} from "../../_lib/github";
 
 export async function onRequestPost(context: any) {
   const { request, env } = context;

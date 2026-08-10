@@ -1,11 +1,11 @@
 // POST /api/guide/delete { id } -> admin-gated. Deletes guides/<id>.json and
 // removes it from guides/index.json, then triggers a Deploy Hook.
-import { getCookie, verifySession, json } from "../_lib/auth";
+import { getCookie, verifySession, json } from "../../_lib/auth";
 import {
   deleteGuide,
   removeIndexEntry,
   triggerDeploy,
-} from "../_lib/github";
+} from "../../_lib/github";
 
 export async function onRequestPost(context: any) {
   const { request, env } = context;
