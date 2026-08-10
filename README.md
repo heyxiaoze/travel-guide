@@ -73,7 +73,35 @@ npm run deploy               # = npm run build && wrangler pages deploy dist
 
 > 若用 CI/环境变量部署，可设置 `CLOUDFLARE_API_TOKEN` 与 `CLOUDFLARE_ACCOUNT_ID` 后直接 `wrangler pages deploy dist`。
 
+## 管理员功能与内容写入（Cloudflare Pages Functions）
+
+站点设计为**游客只读、管理员可写**。管理员鉴权与内容写回通过 Cloudflare Pages Functions 实现（源码在仓库根 `/functions`，构建时自动复制到 `dist/_functions`）：
+
+- `GET  /api/me` —— 返回当前是否管理员（`{ isAdmin }`）。
+- `POST /api/login` —— 校验密码（对比 `ADMIN_PASSWORD`），成功下发**签名 HttpOnly Cookie**（密码本身不进 Cookie，也不进前端包）。
+- `POST /api/logout` —— 清除会话 Cookie。
+- `POST /api/guide/save` —— 管理员门禁；把攻略 JSON 写入内容仓库 `guides/<id>.json` 并更新 `guides/index.json`，随后触发 Deploy Hook 重建站点。
+- `POST /api/guide/delete` —— 管理员门禁；删除攻略并从索引移除。
+
+> 顶栏右上角已有「登录 / 退出」按钮与登录弹窗。区块编辑 UI（Phase 2）与历史版本查看（基于内容仓库的 Git 提交历史，Phase 3）将在后续接入——届时管理员可在网页上直接增删改区块、查看/恢复历史版本。
+
+### 需要的 Cloudflare 变量（建议设为 Secret）
+
+| 变量 | 说明 |
+|------|------|
+| `ADMIN_PASSWORD` | 管理员密码（即你提到的 CF “admin” 文本变量）。登录弹窗填写此值。 |
+| `GITHUB_TOKEN` | 具有 `repo` 权限的 GitHub PAT，用于把攻略写回内容仓库。 |
+| `CONTENT_REPO` | 内容仓库，格式 `owner/repo`（公开，站点读取用）。 |
+| `DEPLOY_HOOK_URL` | Cloudflare Pages Deploy Hook URL，保存/删除后触发站点重建。 |
+
+- **生产**：Cloudflare Dashboard → Pages → 你的项目 → **Settings → Environment variables**，以 **Secret** 类型添加上表变量（Secret 不会进入构建产物）。
+- **本地开发**：复制 `.dev.vars.example` 为 `.dev.vars` 填入同样的值，然后 `npm run dev:cf`（`wrangler pages dev` 会加载 `.dev.vars` 并提供 `/api/*` 路由）。
+
 ## 如何新增一篇攻略
+
+> 攻略内容现已**外置**到独立的内容仓库（如 `heyxiaoze/travel-guide-content`，`guides/*.json` + `guides/index.json`）。站点在构建期（`predev`/`prebuild`）通过 `scripts/sync-content.mjs` 拉取**已发布**攻略生成快照；管理员通过上面的 `/api/guide/save` 写回内容仓库。下面两种方式仍可手工生成数据，作为兜底与本地预览。
+
+
 
 ### 方式一：用内置技能 `travel-guide-addnote`（推荐）
 

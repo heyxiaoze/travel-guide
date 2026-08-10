@@ -9,8 +9,9 @@
   "scripts": {
     "predev": "node scripts/sync-content.mjs",
     "dev": "vite",
+    "dev:cf": "node scripts/sync-content.mjs && node scripts/copy-functions.mjs && npx wrangler pages dev dist",
     "prebuild": "node scripts/sync-content.mjs",
-    "build": "node node_modules/typescript/bin/tsc --noEmit && vite build",
+    "build": "node node_modules/typescript/bin/tsc --noEmit && vite build && node scripts/copy-functions.mjs",
     "preview": "vite preview",
     "typecheck": "node scripts/sync-content.mjs && node node_modules/typescript/bin/tsc --noEmit",
     "deploy": "npm run build && npx wrangler pages deploy dist",

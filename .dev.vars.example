@@ -1,0 +1,17 @@
+# 本地开发用 Cloudflare Pages Functions 变量（wrangler pages dev 读取 .dev.vars）。
+# 复制本文件为 `.dev.vars` 并填入真实值；`.dev.vars` 已被 .gitignore 忽略，不会提交。
+# 生产环境请在 Cloudflare Dashboard → Pages → Settings → Environment variables
+# 中以「Secret」类型添加同名变量（Secret 不会进入构建产物，比普通变量更安全）。
+
+# 管理员密码（你提到的 CF "admin" 文本变量）。登录弹窗填写此值。
+ADMIN_PASSWORD=your-admin-password
+
+# GitHub PAT（需 repo 权限），用于写入内容仓库（guides/*.json + index.json）。
+GITHUB_TOKEN=ghp_xxx
+
+# 内容仓库，格式 owner/repo（公开仓库，站点读取用）。
+CONTENT_REPO=heyxiaoze/travel-guide-content
+
+# Cloudflare Pages Deploy Hook URL（保存/删除后触发站点重建）。
+# 在 Dashboard → Pages → 你的项目 → Deploy hooks 创建一个，粘贴此处。
+DEPLOY_HOOK_URL=https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/xxxx

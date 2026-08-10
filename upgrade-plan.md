@@ -56,15 +56,16 @@ skill 生成笔记两条路径：A) 站点上传（管理员在编辑页贴 JSON
 
 - `Header.tsx` 右上角并排现有主题切换，新增 **登录按钮 + 弹窗**（填密码）。
 - `wrangler.toml` 启用 Pages Functions；新增 **Secrets**（非明文变量，避免进构建产物）：
-  - `ADMIN_PASSWORD` —— 你口中的 admin 文本变量
-  - `ADMIN_SESSION_SECRET` —— 给会话 Cookie 做 HMAC 签名
+  - `ADMIN_PASSWORD` —— 你口中的 admin 文本变量（**同时作为会话 Cookie 的 HMAC 密钥**，无需额外 SESSION_SECRET）
   - `GITHUB_TOKEN` —— 写回内容仓库（public repo 仅需 `repo` 作用域）
   - `CONTENT_REPO` —— `owner/repo`（内容仓库）
-  - `DEPLOY_HOOK` —— CF Pages Deploy Hook URL
-- 端点：
-  - `functions/api/login.ts`：比对 `ADMIN_PASSWORD` → 下发 HMAC 签名 **httpOnly Cookie**
-  - `functions/api/logout.ts`
-  - `functions/api/guide/save.ts`、`delete.ts`、`upload.ts`、`restore.ts`：均校验 Cookie，游客 401
+  - `DEPLOY_HOOK_URL` —— CF Pages Deploy Hook URL
+- 端点（**Phase 1 已实现**）：
+  - `functions/api/login.ts`：比对 `ADMIN_PASSWORD` → 下发 HMAC 签名 **httpOnly Cookie**（Cookie 不含密码本身）
+  - `functions/api/logout.ts`：清除会话
+  - `functions/api/me.ts`：返回 `{isAdmin}`（客户端据此显示管理员 UI）
+  - `functions/api/guide/save.ts`、`delete.ts`：**已实现**，均校验 Cookie，游客 401；写回内容仓库并触发重建
+  - （`upload.ts`、`restore.ts` 属 Phase 3，待接入）
 - 防护级别：单密码共享 = **deterrent 级**（个人站足够），非多用户账号体系；可加简单限流防爆破。**不要在此放敏感数据**。
 
 ---
@@ -99,20 +100,24 @@ skill 生成笔记两条路径：A) 站点上传（管理员在编辑页贴 JSON
 
 ### 新增
 ```
-scripts/sync-content.ts              # 构建期拉内容仓库"已发布"JSON → public/content/guides.json
-scripts/migrate.ts                   # 一次性：src/data/*.ts → guides/<id>.json (内容仓库初始化)
-functions/api/login.ts               # 鉴权
-functions/api/logout.ts
-functions/api/guide/save.ts          # 写回 Git + 触发重建
-functions/api/guide/delete.ts
-functions/api/guide/upload.ts        # skill 上传入口
-functions/api/guide/restore.ts       # 历史恢复
-src/components/editor/*              # 编辑器套件(EditorProvider / 各 BlockEditor / 拖拽)
-src/components/layout/LoginModal.tsx
-src/components/guide/HistoryDrawer.tsx
-src/lib/auth.ts                      # 会话上下文(Cookie)
-src/lib/content.ts                   # 读取快照 / 调 Function
-依赖新增: @dnd-kit/core @dnd-kit/sortable zustand immer nanoid
+scripts/sync-content.mjs              # 构建期拉内容仓库"已发布"JSON → src/data/generated.ts（Phase 0 已实现）
+scripts/migrate.mjs                   # 一次性：src/data/*.ts → guides/<id>.json（Phase 0 已实现）
+scripts/copy-functions.mjs            # 构建期把 /functions → dist/_functions（Functions 随直接上传部署）
+functions/_lib/auth.ts                # HMAC 会话 Cookie（Web Crypto）+ 响应助手
+functions/_lib/github.ts              # GitHub Contents API 写回（UTF-8 base64）+ Deploy Hook
+functions/api/me.ts                   # 已实现：返回 {isAdmin}
+functions/api/login.ts                # 已实现：校验 ADMIN_PASSWORD → 签名 Cookie
+functions/api/logout.ts               # 已实现
+functions/api/guide/save.ts           # 已实现：写回 Git + 更新 index + 触发重建
+functions/api/guide/delete.ts         # 已实现
+functions/api/guide/upload.ts         # skill 上传入口（Phase 3）
+functions/api/guide/restore.ts        # 历史恢复（Phase 3）
+src/components/editor/*               # 编辑器套件(EditorProvider / 各 BlockEditor / 拖拽)（Phase 2）
+src/components/layout/LoginModal.tsx  # 已实现：登录弹窗
+src/components/guide/HistoryDrawer.tsx# （Phase 3）
+src/lib/auth.tsx                      # 已实现：会话上下文(Cookie) + useAuth
+src/lib/content.ts                    # 读取快照 / 调 Function（Phase 2/3 按需）
+依赖新增(Phase 2): @dnd-kit/core @dnd-kit/sortable zustand immer nanoid
 ```
 
 ### 修改
@@ -134,9 +139,10 @@ src/types/guide.ts                  # Guide 增 status 字段；gallery 限定�
   1. 新建公开内容仓库 `travel-guide-content`。
   2. `scripts/migrate.ts` 把现有 3 篇 `src/data/*.ts` 转 `guides/*.json` 并提交到内容仓库（保留原 `.ts` 兜底）。
   3. `scripts/sync-content.ts` + `registry.ts` 改读快照；`npm run dev` 验证站点内容正常（游客视角）。
-- **Phase 1 鉴权 + Functions（本地先行）**
-  4. `wrangler.toml` 启用 Functions；Secrets 就位。
-  5. `LoginModal` + `auth.ts` + `login/logout` 端点；`wrangler dev` 跑通登录态。
+- **Phase 1 鉴权 + Functions（已实现后端 + 登录 UI）**
+  4. ✅ `wrangler.toml` 启用 Functions；Secrets 就位（ADMIN_PASSWORD / GITHUB_TOKEN / CONTENT_REPO / DEPLOY_HOOK_URL）。
+  5. ✅ `LoginModal` + `auth.tsx` + `login/logout/me` 端点；`save/delete` 端点已实现（写回 Git + 触发重建）。`wrangler dev`（`npm run dev:cf`）可本地跑通登录态与写回（需配 `.dev.vars`）。
+  6. ⏳ 余下：编辑器 UI（Phase 2）调 `save`；`upload`/`restore`（Phase 3）。
 - **Phase 2 编辑器（核心体验）**
   6. `EditorProvider` + 各 `BlockEditor` + `@dnd-kit` 拖拽 + 实时预览。
   7. `save/delete` 端点（校验 Cookie → 写 Git → 触发重建）；草稿/发布切换。

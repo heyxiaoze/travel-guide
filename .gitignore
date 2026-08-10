@@ -9,6 +9,9 @@ src/data/generated.ts
 # 构建产物
 dist/
 
+# 本地 Cloudflare 变量（含密钥，切勿提交；从 .dev.vars.example 复制）
+.dev.vars
+
 # 迁移/同步脚本的临时产物与本地内容仓库工作副本（真实内容在独立 git 仓库）
 .migrate-tmp-*.mjs
 travel-guide-content/

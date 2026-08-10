@@ -3,13 +3,16 @@ import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
 import App from "./App";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/lib/auth";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HashRouter>
-      <App />
-      <Toaster position="bottom-center" richColors />
+      <AuthProvider>
+        <App />
+        <Toaster position="bottom-center" richColors />
+      </AuthProvider>
     </HashRouter>
   </React.StrictMode>
 );
