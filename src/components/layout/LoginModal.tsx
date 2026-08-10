@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 
@@ -30,7 +31,7 @@ export function LoginModal({
     }
   };
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
       onClick={onClose}
@@ -66,6 +67,7 @@ export function LoginModal({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

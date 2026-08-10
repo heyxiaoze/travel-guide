@@ -52,6 +52,12 @@ export function HomePage() {
   const guides = GUIDE_ORDER.map((id) => TRAVEL_GUIDES[id]).filter(Boolean);
   const gridRef = useRef<HTMLDivElement>(null);
 
+  const LAST_TRIP_DATE = new Date(2026, 4, 5); // 2026-05-05
+  const daysSinceLastTrip = Math.max(
+    0,
+    Math.floor((Date.now() - LAST_TRIP_DATE.getTime()) / 86400000)
+  );
+
   const scrollToGuides = () =>
     gridRef.current?.scrollIntoView({ behavior: "smooth" });
 
@@ -101,10 +107,11 @@ export function HomePage() {
                   Journeys in Numbers
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-x-6 gap-y-6">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
                 <MetaItem k="攻略" value={guides.length} suffix="篇" />
-                <MetaItem k="已去城市" value={98} suffix="座" />
+                <MetaItem k="已去城市" value={95} suffix="个" />
                 <MetaItem k="已自驾行驶" value={20000} suffix="km+" />
+                <MetaItem k="距上次出去玩已过去" value={daysSinceLastTrip} suffix="天" />
               </div>
             </div>
           </div>

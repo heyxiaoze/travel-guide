@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { LogIn, LogOut, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 import { LoginModal } from "./LoginModal";
@@ -65,24 +64,38 @@ export function Header() {
               <span className="hidden items-center gap-1 text-xs text-muted-foreground sm:inline-flex">
                 <ShieldCheck className="h-4 w-4 text-emerald-500" /> 管理员
               </span>
-              <Button
-                variant="ghost"
-                size="sm"
+              <button
+                type="button"
                 onClick={() => logout()}
-                title="退出管理员"
+                title="LOGOUT"
+                className={navClass({ isActive: false })}
               >
-                <LogOut className="h-4 w-4" /> 退出
-              </Button>
+                <RollText
+                  groupHover
+                  stagger="character"
+                  staggerMs={28}
+                  durationMs={320}
+                  text="LOGOUT"
+                  className="pointer-events-none"
+                />
+              </button>
             </>
           ) : (
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={() => setLoginOpen(true)}
-              title="管理员登录"
+              title="LOGIN"
+              className={navClass({ isActive: false })}
             >
-              <LogIn className="h-4 w-4" /> 登录
-            </Button>
+              <RollText
+                groupHover
+                stagger="character"
+                staggerMs={28}
+                durationMs={320}
+                text="LOGIN"
+                className="pointer-events-none"
+              />
+            </button>
           )}
           <ThemeToggle />
         </div>
