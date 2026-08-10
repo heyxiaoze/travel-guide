@@ -7,11 +7,15 @@
     "node": ">=20"
   },
   "scripts": {
+    "predev": "node scripts/sync-content.mjs",
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "prebuild": "node scripts/sync-content.mjs",
+    "build": "node node_modules/typescript/bin/tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
-    "deploy": "npm run build && npx wrangler pages deploy dist"
+    "typecheck": "node scripts/sync-content.mjs && node node_modules/typescript/bin/tsc --noEmit",
+    "deploy": "npm run build && npx wrangler pages deploy dist",
+    "content:sync": "node scripts/sync-content.mjs",
+    "content:migrate": "node scripts/migrate.mjs"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.1.0",

@@ -2,6 +2,13 @@
 .Ds_Store
 *.log
 node_modules/
+
+# 自动生成：由 scripts/sync-content.mjs 在 predev/prebuild 从内容仓库生成
+src/data/generated.ts
+
+# 构建产物
 dist/
-.hallmark/
-.workbuddy/
+
+# 迁移/同步脚本的临时产物与本地内容仓库工作副本（真实内容在独立 git 仓库）
+.migrate-tmp-*.mjs
+travel-guide-content/

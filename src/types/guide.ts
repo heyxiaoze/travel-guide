@@ -137,6 +137,8 @@ export interface Fact {
 
 export interface Guide {
   id: string;
+  /** 发布状态：published=游客可见；draft=仅管理员可见（不进入游客构建快照）。 */
+  status?: "draft" | "published";
   updatedAt?: string;
   /** 出行形式，可多选：如 ["自驾", "公共交通"]。缺省时由 guide-filters 推断。 */
   modes?: string[];
