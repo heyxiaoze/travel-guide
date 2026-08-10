@@ -12,8 +12,6 @@ import { Empty, EmptyDescription, EmptyTitle, EmptyActions } from "@/components/
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RichText } from "@/components/RichText";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
-import { ImageBanner } from "@/components/ui/image-banner";
-import { guideBanner } from "@/lib/guide-images";
 import { TRAVEL_GUIDES } from "@/data/registry";
 import type { Guide, Section } from "@/types/guide";
 
@@ -132,27 +130,16 @@ export function GuidePage() {
 
   return (
     <div>
-      {/* Cover band: swipeable banner when the guide has multiple images */}
-      {guideBanner(guide.id).length > 0 ? (
-        <ImageBanner
-          images={guideBanner(guide.id)}
-          alt={guide.title}
-          heightClass="h-44 sm:h-60"
-          rounded="rounded-none"
-          autoPlay
-          interval={6000}
+      {/* Cover band: gradient + emoji hero */}
+      <section
+        className="flex h-40 items-center justify-center sm:h-52"
+        style={{ background: guide.color }}
+      >
+        <RichText
+          value={guide.emoji ?? "{{icon:compass}}"}
+          iconClassName="size-12 text-white drop-shadow sm:size-16"
         />
-      ) : (
-        <section
-          className="flex h-40 items-center justify-center sm:h-52"
-          style={{ background: guide.color }}
-        >
-          <RichText
-            value={guide.emoji ?? "{{icon:compass}}"}
-            iconClassName="size-12 text-white drop-shadow sm:size-16"
-          />
-        </section>
-      )}
+      </section>
 
       <div className="container py-6">
         {/* Breadcrumb */}

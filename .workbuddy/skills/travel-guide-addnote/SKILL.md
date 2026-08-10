@@ -8,7 +8,11 @@ agent_created: true
 
 ## Overview
 
-The Travel Guide site (`C:/Documents/Travel Guide`) is a zero-build static SPA where **every travel guide is a single data file** under `data/*.js`. Adding a new note means: create one data file, register it, and wire it into `index.html`. This skill automates that scaffold and documents the data schema so the content renders correctly through `app.js` / `helpers.js`.
+This repo is a **React + Vite + TypeScript SPA** (shadcn/ui + Tailwind). **Every travel guide is a single TS data module** under `src/data/<id>.ts`, and is registered in `src/data/registry.ts` (imported into `GUIDE_ORDER` + `TRAVEL_GUIDES`). There is **no** `window.registerGuide` / `data/*.js` / `index.html <script>` wiring anymore — that was the old vanilla site, which is now legacy/dead weight.
+
+> ⚠️ The bundled `scripts/scaffold_guide.py` + `assets/guide-template.js` still target the **legacy vanilla site** (`data/<id>.js` + `index.html` `<script>`). Do **not** use them for the live React site — they produce files that won't render. Use the Manual steps below instead.
+
+Adding a new note means: create `src/data/<id>.ts`, register it in `src/data/registry.ts`, then `npm run build` to verify. The content schema (block types) is the same as the legacy site and is documented in `references/block-types.md`.
 
 ## When to use
 
@@ -33,13 +37,13 @@ The script:
 
 It refuses to overwrite an existing `data/<id>.js`.
 
-## Manual steps (if not using the script)
+## Manual steps (React / Vite SPA — the live site)
 
-1. Copy `data/qinggan-2026.js` (or the bundled `assets/guide-template.js`) to `data/<id>.js`.
-2. Edit the `window.registerGuide({...})` object — set a unique `id`, plus `title` / `subtitle` / `emoji` / `facts` / `meta` / `sections`.
-3. Open `index.html`; add `<script src="data/<id>.js"></script>` on its own line **between** the `helpers.js` line and the `assets/js/app.js` line (load order matters: helpers → data → app).
-4. Validate: `node -e "global.window={registerGuide:function(){}}; require('./data/<id>.js'); console.log('OK')"`.
-5. Preview: start any static server in the repo root (e.g. `python -m http.server 8080`) and open `index.html`.
+1. Copy an existing module (e.g. `src/data/qinggan-2026.ts`) to `src/data/<id>.ts` and set a unique `id`, plus `title` / `subtitle` / `emoji` / `facts` / `meta` / `sections`. Keep the trailing `export const guideData: Guide = raw as unknown as Guide;`.
+2. Icons use the `{{icon:name}}` token, resolved to Lucide via `src/lib/icons.tsx` (`ICON_MAP`). Valid names include: `warning, ticket, compass, car, map-trifold, airplane, push-pin, mountains, money, house, calendar-blank, calendar, backpack, arrow-counter-clockwise, waves, shield, scroll, prohibit, lightning, fork-knife, buildings, bed, bank, circle, map-pin, banknote`. Unknown names fall back to a `Circle`.
+3. Register it in `src/data/registry.ts`: add `import { guideData as <x> } from "./<id>";`, push `<x>.id` into `GUIDE_ORDER`, and add `[<x>.id]: <x>` to `TRAVEL_GUIDES`.
+4. Validate + render: `npm run build` (runs `tsc --noEmit` + `vite build`). Start the dev server with `npm run dev` and open `#/guide/<id>`.
+5. Preview: `npm run dev` → open `http://localhost:5173/#/guide/<id>`.
 
 ## Content schema
 
@@ -54,14 +58,14 @@ See `references/block-types.md` for the full field reference. Key points:
 
 ## Rendering notes
 
-- `app.js` registers guides via `window.registerGuide` (defined in `helpers.js`) into `TRAVEL_GUIDES` / `GUIDE_ORDER`.
-- All blocks render client-side; no build step. After editing, just refresh the preview.
-- Route to a guide at `#/guide/<id>`.
+- Guides register through `src/data/registry.ts` → `GUIDE_ORDER` + `TRAVEL_GUIDES`. The app is a client-side React SPA (HashRouter), so routes like `#/guide/<id>` work with no server config.
+- All blocks render client-side. After editing, run `npm run build` (or `npm run dev`) to verify — there **is** a build step now (TypeScript + Vite).
+- The `{{icon:name}}` tokens and `tags` keyword colors (免费/预约/拍照/换电/洗澡/可选/补给) render identically to the legacy schema.
 
 ## Checklist before finishing
 
-- [ ] `data/<id>.js` exists and `node` syntax check passes.
-- [ ] `index.html` has the `<script>` line placed before `assets/js/app.js`.
+- [ ] `src/data/<id>.ts` exists and `npm run build` (tsc) passes.
+- [ ] `src/data/registry.ts` imports it and adds it to `GUIDE_ORDER` + `TRAVEL_GUIDES`.
 - [ ] `id` is unique and URL-safe (letters/digits/hyphen).
 - [ ] At least one `section` with a `day` block so the page isn't empty.
-- [ ] Preview renders without console errors.
+- [ ] Preview at `#/guide/<id>` renders without console errors.

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 import RollText from "@/animata/text/roll-text";
@@ -31,18 +30,6 @@ export function Header() {
       )}
     >
       <div className="container flex h-16 items-center justify-between">
-        <NavLink to="/" className="flex items-center gap-2.5 font-semibold">
-          <span className="grid size-8 place-items-center rounded-lg border bg-secondary text-primary">
-            <Compass className="size-[18px]" />
-          </span>
-          <span className="text-[15px] tracking-tight">
-            旅行日志
-            <small className="ml-1.5 font-mono text-[10px] font-medium tracking-wider text-muted-foreground">
-              TRAVEL JOURNAL
-            </small>
-          </span>
-        </NavLink>
-
         <nav className="flex items-center gap-1">
           <NavLink to="/" className={navClass} end>
             <RollText
@@ -64,8 +51,9 @@ export function Header() {
               className="pointer-events-none"
             />
           </NavLink>
-          <ThemeToggle />
         </nav>
+
+        <ThemeToggle />
       </div>
     </header>
   );
