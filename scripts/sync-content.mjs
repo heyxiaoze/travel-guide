@@ -11,8 +11,13 @@ import path from "node:path";
 const PROJECT = process.cwd();
 const OUT_FILE = path.join(PROJECT, "src", "data", "generated.ts");
 
-const OWNER = process.env.CONTENT_OWNER || "heyxiaoze";
-const REPO = process.env.CONTENT_REPO || "travel-guide-content";
+// CONTENT_REPO is the full "owner/repo" form (e.g. "heyxiaoze/travel-guide-content"),
+// consistent with how functions/_lib/github.ts and .dev.vars.example use it.
+// CONTENT_OWNER is only a fallback when CONTENT_REPO is given as a bare repo name.
+const REPO_FULL = process.env.CONTENT_REPO || "heyxiaoze/travel-guide-content";
+const [OWNER, REPO] = REPO_FULL.includes("/")
+  ? REPO_FULL.split("/")
+  : [process.env.CONTENT_OWNER || "heyxiaoze", REPO_FULL];
 const BRANCH = process.env.CONTENT_BRANCH || "main";
 const LOCAL_DIR = process.env.CONTENT_LOCAL_DIR
   ? path.resolve(PROJECT, process.env.CONTENT_LOCAL_DIR)
