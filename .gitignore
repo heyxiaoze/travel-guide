@@ -18,3 +18,6 @@ travel-guide-content/
 
 # Vite 加载配置时生成的临时文件（vite.config.ts.timestamp-*.mjs）
 vite.config.ts.timestamp-*.mjs
+
+# 已安装 skill 副本（由独立 skills 仓库的 install.sh 生成，勿提交）
+.workbuddy/skills/
