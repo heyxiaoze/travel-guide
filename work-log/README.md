@@ -74,7 +74,7 @@
 
 > 按 §7 每次提交必写。格式：日期 · 类型 · 提交号（短 hash）· 已推送（✓ / ✗）· 一句话说明。
 
-- **2026-08-11 · 迁移 · `69a3178`(travel-guide) / `28e98c8`(content) · ✓ · 攻略内容收归 `travel-guide-content` 单一真相源**
+- **2026-08-11 · 迁移 · `49044b5`(travel-guide) / `630cf54`(content) / `56eba17`(skills) · ✓ · 攻略内容收归 `travel-guide-content` 单一真相源**
   - 决策：所有攻略的创建 / 更新 / 读取统一在内容仓库 `guides/<id>.json` + `guides/index.json`；主仓库 `src/data/` 删除全部静态 `.ts` 攻略模块（qinggan / chuanyu / dalian-qiqihaer / dalian-yingkou），`registry.ts` 简化为仅消费构建期生成的 `generated.ts`（来自内容仓远程），不再保留静态兜底。
   - 动机：内容仓读取逻辑（`sync-content.mjs`）已验证跑通，主仓库不再需要冗余副本；单一真相源避免双份漂移。
   - 副作用：`generated.ts` 被 gitignore，站点构建 / 运行依赖内容仓可达（线上经 `raw.githubusercontent.com` 拉取；本地 `predev` / `prebuild` 同）；内容仓不可达时站点回退为无攻略（空兜底）。
