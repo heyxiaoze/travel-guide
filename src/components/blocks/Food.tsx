@@ -20,16 +20,40 @@ export function FoodView({ block }: { block: FoodBlock }) {
             <div className="flex items-center gap-1.5 font-semibold">
               <ForkKnife className="size-4 text-primary" /> {it.name}
             </div>
+            {it.tags && it.tags.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                {it.tags.map((t, ti) => (
+                  <span
+                    key={ti}
+                    className="rounded-md border bg-secondary px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
             {it.addr && (
               <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                 <MapPin className="size-3.5" /> {it.addr}
               </div>
             )}
-            {it.price && (
-              <div className="mt-1 font-mono text-sm font-bold text-rose-600">
-                {it.price}
+            {it.dishes && it.dishes.length > 0 && (
+              <div className="mt-1 text-xs text-muted-foreground">
+                特色菜：{it.dishes.join("、")}
               </div>
             )}
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+              {(it.perCapita || it.price) && (
+                <span className="font-mono text-sm font-bold text-rose-600">
+                  {it.perCapita ?? it.price}
+                </span>
+              )}
+              {it.hours && (
+                <span className="text-xs text-muted-foreground">
+                  营业 {it.hours}
+                </span>
+              )}
+            </div>
             {it.src && (
               <div className="mt-1 text-[11px] text-success">{it.src}</div>
             )}

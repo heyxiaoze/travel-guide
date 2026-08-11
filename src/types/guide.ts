@@ -9,6 +9,12 @@ export interface DayItem {
   s?: string;
   place?: Place;
   tags?: string[];
+  /** 停车建议（自驾位 / 收费 / 远近） */
+  parking?: string;
+  /** 公共交通建议（最近地铁 / 公交 / 步行距离） */
+  transit?: string;
+  /** 游玩时间参考，如 "2–3 小时" */
+  duration?: string;
   note?: string;
 }
 
@@ -21,7 +27,30 @@ export interface DayBlock {
   items: DayItem[];
   sleep?: Place;
   eat?: Place[];
+  /** 每餐备选：早 / 午 / 晚（+ 夜宵 / 小吃）各 3–5 家，避免行程死板 */
+  meals?: MealSlot[];
   note?: string;
+}
+
+export interface MealItem {
+  name: string;
+  copy?: string;
+  sub?: string;
+  addr?: string;
+  /** 1–2 个标签：小吃 / 烧烤 / 特色 / 火锅 / 本地菜 … */
+  tags?: string[];
+  /** 特色菜列表 */
+  dishes?: string[];
+  /** 人均，如 "¥25" */
+  perCapita?: string;
+  /** 营业时间，如 "06:00–14:00" */
+  hours?: string;
+  note?: string;
+}
+
+export interface MealSlot {
+  kind: "早" | "午" | "晚" | "夜宵" | "小吃";
+  items: MealItem[];
 }
 
 export interface TextBlock {
@@ -67,6 +96,14 @@ export interface TableBlock {
 export interface FoodItem {
   name: string;
   addr?: string;
+  /** 1–2 个标签：小吃 / 烧烤 / 特色 / 火锅 / 本地菜 … */
+  tags?: string[];
+  /** 特色菜列表 */
+  dishes?: string[];
+  /** 人均，如 "¥25" */
+  perCapita?: string;
+  /** 营业时间，如 "10:00–22:00" */
+  hours?: string;
   price?: string;
   src?: string;
   note?: string;

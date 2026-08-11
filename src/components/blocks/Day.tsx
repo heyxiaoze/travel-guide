@@ -113,10 +113,61 @@ export function DayView({
                     <RichText value={it.note} />
                   </div>
                 )}
+                {(it.parking || it.transit || it.duration) && (
+                  <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-muted-foreground">
+                    {it.parking && <span>停车：{it.parking}</span>}
+                    {it.transit && <span>公交：{it.transit}</span>}
+                    {it.duration && <span>游玩：{it.duration}</span>}
+                  </div>
+                )}
               </div>
             </li>
           ))}
         </ul>
+        {block.meals && block.meals.length > 0 && (
+          <div className="mt-3 flex flex-col gap-3 border-t pt-3">
+            {block.meals.map((slot, si) => (
+              <div key={si}>
+                <div className="mb-1 font-mono text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                  {slot.kind}
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  {slot.items.map((m, mi) => (
+                    <div
+                      key={mi}
+                      className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]"
+                    >
+                      <span className="font-semibold">{m.name}</span>
+                      {m.tags?.map((t, ti) => (
+                        <span
+                          key={ti}
+                          className="rounded-md border bg-secondary px-1.5 py-0.5 text-[11px] text-muted-foreground"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                      {m.dishes && m.dishes.length > 0 && (
+                        <span className="text-muted-foreground">
+                          特色菜：{m.dishes.join("、")}
+                        </span>
+                      )}
+                      {m.perCapita && (
+                        <span className="font-mono text-sm font-bold text-rose-600">
+                          {m.perCapita}
+                        </span>
+                      )}
+                      {m.hours && (
+                        <span className="text-muted-foreground">
+                          营业 {m.hours}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         {(block.sleep || block.eat || block.note) && (
           <div className="mt-3 flex flex-col gap-2 border-t pt-3">
             {block.sleep && (
