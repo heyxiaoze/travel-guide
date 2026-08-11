@@ -74,6 +74,12 @@
 
 > 按 §7 每次提交必写。格式：日期 · 类型 · 提交号（短 hash）· 已推送（✓ / ✗）· 一句话说明。
 
+- **2026-08-11 · 功能/迁移 · `0a34fff`(travel-guide) · ✓ · 游客读取改为运行时经 `/guides` Function 拉取内容仓，彻底免重建**
+  - 决策：游客只读路径不再依赖构建期 `generated.ts` 快照，改为 Cloudflare Function `functions/guides/[[id]].ts` 在**请求时**从 `travel-guide-content` 仓拉取已发布攻略（边缘缓存 `s-maxage=60` + `stale-while-revalidate`），`generated.ts` 降级为「内容仓不可达」时的离线兜底；`src/lib/content.ts` 先渲染快照再升级为运行时数据（无闪烁）。
+  - 动机：用户要求「只更新内容仓库就上线、不提交/部署主仓库」。原构建期快照模型下线上是静态产物，必须触发 `travel-guide` 重建才生效；改为运行时读取后，内容仓 `main` 分支更新约 1 分钟内自动上线。
+  - 副作用：移除 `save`/`delete` 的 `triggerDeploy`（不再需要重建）；游客每次请求依赖 GitHub raw 可达（已有边缘缓存兜底）；管理员写回仍走 GitHub Contents API 提交到内容仓。
+  - 关联：`README.md`、`work-log` SOP §2/§3 同步为运行时读取模型；Notion SOP / Changelog / Dev Tasks / Sync 同步。
+
 - **2026-08-11 · 迁移 · `49044b5`(travel-guide) / `630cf54`(content) / `56eba17`(skills) · ✓ · 攻略内容收归 `travel-guide-content` 单一真相源**
   - 决策：所有攻略的创建 / 更新 / 读取统一在内容仓库 `guides/<id>.json` + `guides/index.json`；主仓库 `src/data/` 删除全部静态 `.ts` 攻略模块（qinggan / chuanyu / dalian-qiqihaer / dalian-yingkou），`registry.ts` 简化为仅消费构建期生成的 `generated.ts`（来自内容仓远程），不再保留静态兜底。
   - 动机：内容仓读取逻辑（`sync-content.mjs`）已验证跑通，主仓库不再需要冗余副本；单一真相源避免双份漂移。
