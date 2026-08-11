@@ -9,9 +9,15 @@ ADMIN_PASSWORD=your-admin-password
 # GitHub PAT（需 repo 权限），用于写入内容仓库（guides/*.json + index.json）。
 GITHUB_TOKEN=ghp_xxx
 
-# 内容仓库，格式 owner/repo（公开仓库，站点读取用）。
+# 内容仓库，格式 owner/repo（公开仓库，站点运行时读取用）。
 CONTENT_REPO=heyxiaoze/travel-guide-content
 
-# Cloudflare Pages Deploy Hook URL（保存/删除后触发站点重建）。
-# 在 Dashboard → Pages → 你的项目 → Deploy hooks 创建一个，粘贴此处。
-DEPLOY_HOOK_URL=https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/xxxx
+# 内容仓库分支，默认 main（游客经 /guides Function 运行时读取此分支）。
+CONTENT_REF=main
+
+# /guides 边缘缓存秒数，默认 60（改完内容约 1 分钟内全量生效）。
+# 调大=更长陈旧但更少 GitHub 请求；调小=更鲜但更多请求。设为 0 则每次都回源。
+GUIDE_CACHE_SMAXAGE=60
+
+# 注意：DEPLOY_HOOK_URL 已不再需要——游客读取改为运行时 /guides Function，
+# 只改内容仓库即可上线，不再触发主仓库重建。
