@@ -1,8 +1,81 @@
-# work-log
+# work-log · Travel Guide App 开发规范 & 工作流 SOP（本地镜像）
 
-本目录已完全迁移至 Notion → **🌋 Travel Guide App** 工作区：
-https://app.notion.com/p/3b9333f5aca4802a95f3f4b5fc2330c7
+> 本文件是 Notion「🔧 开发规范 & 工作流 SOP」的**本地镜像**。规范同源：**改一处必须同步另一处**。
+> Notion 主：🌋 Travel Guide App → 🚀 开发工作区 → 🔧 开发规范 & 工作流 SOP
+> 任何人或 AI 接手本项目，先读本文件 + Notion SOP，即懂全部规范与流程。
 
-- 🛠️ 开发任务 Dev Tasks · 📝 变更日志 Changelog · 🔒 锁定决策 Decisions · ⚠️ 已知风险 Risks · 🔄 双机同步 Sync 均在 Notion。
-- 流程化规范见 Notion「🔁 工作流 SOP」页面。
-- 所有操作记录改记 Notion，不再写本目录（原站规指向已更新）。
+## 1. 项目定位
+把「真实出行规划」与「App 重建开发」统一管理：内容（指南 / 行程）进站点，开发（任务 / 变更 / 规范）进本工作区。
+
+## 2. 技术栈
+- React 18 + Vite + TypeScript
+- shadcn/ui 组件库（Radix + Tailwind）
+- 数据层：构建期由 `scripts/sync-content.mjs` 从 `travel-guide-content` 仓拉取「已发布」攻略，生成 `src/data/generated.ts`（`CONTENT_GUIDES` / `CONTENT_ORDER`），`registry.ts` 仅消费它
+- 内容源：`travel-guide-content/*.json`
+
+## 3. 约定
+- 新增攻略 / 笔记走 `travel-guide-addnote` skill，落成 `travel-guide-content/guides/<id>.json` 并登记 `guides/index.json`（`status: "published"`）；`src/data/` 不再存攻略内容，仅由构建期生成的 `generated.ts` 快照消费
+- 样式遵循 shadcn 主题 token，支持明暗切换；提交前确保 `npm run build` 通过
+- 目录：`src/data/`（`registry.ts` + 构建期生成、被 gitignore 的 `generated.ts` 快照，**不含攻略内容**）、`src/components/`（UI）、`travel-guide-content/`（攻略唯一真相源：`guides/*.json` + `index.json`）
+
+## 4. 设计规范
+- 组件：shadcn/ui（Radix + Tailwind）；主题 light / dark 跟随系统、可手动切换
+- 色彩 / 字体集中在 Tailwind config / CSS 变量，禁止裸值；行程状态、任务优先级用统一色板
+- 页面：首页目的地导航；攻略详情分 路线 / 美食 / 住宿 / 贴士；移动端优先响应式
+
+## 5. 工作流（双 SOP：Notion 主 + 本地 README 镜像）
+> 把「跨设备交接 + 记录」变成必须走的清单（Mac ↔ Win 互不丢失）。
+
+### 🟢 会话开始（每次开工先走）
+1. `git pull --ff-only`（`travel-guide` 与 `travel-guide-content` 两仓库）
+2. 读 Notion 开发工作区：Dev Tasks / Changelog / Sync
+3. 看对方机器最近是否动过（Sync 的「最后动手时间 / 当前 HEAD」）；若对方 HEAD 更新 → 提示先 pull
+4. 更新 Sync 本机「最后动手时间」为现在
+
+### 🔵 会话结束（收工前必走）
+1. 更新相关 Dev Tasks 的状态 / 优先级 / 备注
+2. 写一条 Changelog：日期 / 类型 / 提交号 / 已推送
+3. `git commit` + `git push`
+4. 在 Sync 标记本机 HEAD + 已推送 GitHub = ✓
+5. 同步双 SOP：本文件与 Notion SOP 保持一致
+
+### 📌 原则
+- 双 SOP 同源：Notion 为主，本地 README 为镜像；**改一处同步另一处**
+- 锁定决策（Decisions）除非用户明确改变，否则不推翻
+- 关联攻略（Guides）与开发任务双向打通，草稿 / 发布状态一眼可见
+
+## 6. Dev Tasks 模板（每条开发任务必填）
+- **标题**：动作 + 对象（如「新增指南搜索筛选」）
+- **状态**：规划（Notion 中显示名为「未开始」）/ 进行中 / 已完成
+- **优先级**：高 / 中 / 低
+- **模块**：shadcn/ui / 数据层 / 页面 / 构建部署 / 调研
+- **阶段**：P0内容外化 / P1鉴权写回 / P2编辑器 / P3版本与草稿 / 跨设备互通 / 部署 / Skills / 维护
+- **类型**：功能 / 修复 / 调研 / 文档 / 部署 / 迁移 / 技能
+- **机器**：Mac / Win / 双端
+- **关联**：关联提交 / 关联攻略 / 依赖 / 变更记录
+- **备注**：验收标准 + 关键决策链接
+
+## 7. Changelog 模板（每次提交必写）
+- 日期 · 类型 · 提交号（短 hash）· 已推送（✓ / ✗）· 一句话说明
+- 关联 Dev Tasks（反向在任务里挂变更记录）
+
+## 8. 双机同步 Sync 字段
+- 机器（Mac / Win）· 最后动手时间 · 当前 HEAD · 已推送 GitHub · 待办提醒
+
+## 9. 治理
+- 🔒 锁定决策 Decisions：架构 / 产品锁定项，勿推翻
+- ⚠️ 已知风险 Risks：活跃风险雷达，含机器维度
+- 本规范与 Notion SOP 构成「双 SOP」，任何 AI 接手即按此执行，无需重新摸索。
+
+---
+*最后同步：本文件与 Notion「🔧 开发规范 & 工作流 SOP」保持一致。改一处请同步另一处。*
+
+## 10. 变更记录（Changelog）
+
+> 按 §7 每次提交必写。格式：日期 · 类型 · 提交号（短 hash）· 已推送（✓ / ✗）· 一句话说明。
+
+- **2026-08-11 · 迁移 · `69a3178`(travel-guide) / `28e98c8`(content) · ✓ · 攻略内容收归 `travel-guide-content` 单一真相源**
+  - 决策：所有攻略的创建 / 更新 / 读取统一在内容仓库 `guides/<id>.json` + `guides/index.json`；主仓库 `src/data/` 删除全部静态 `.ts` 攻略模块（qinggan / chuanyu / dalian-qiqihaer / dalian-yingkou），`registry.ts` 简化为仅消费构建期生成的 `generated.ts`（来自内容仓远程），不再保留静态兜底。
+  - 动机：内容仓读取逻辑（`sync-content.mjs`）已验证跑通，主仓库不再需要冗余副本；单一真相源避免双份漂移。
+  - 副作用：`generated.ts` 被 gitignore，站点构建 / 运行依赖内容仓可达（线上经 `raw.githubusercontent.com` 拉取；本地 `predev` / `prebuild` 同）；内容仓不可达时站点回退为无攻略（空兜底）。
+  - 关联：`travel-guide-addnote` skill 的「落成 `src/data/<id>.ts`」步骤已改为「落成 `guides/<id>.json` + 登记 `index.json`」；两仓库 README 同步更新。
