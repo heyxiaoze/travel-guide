@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Download } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -152,6 +153,22 @@ export function GuidePage() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  // Export the current guide to PDF via the browser's print pipeline.
+  // The user picks "Save as PDF" in the print dialog; the @media print
+  // stylesheet renders a clean light-theme document. We temporarily set
+  // document.title so the saved file gets a sensible name, then restore it.
+  const handleExportPdf = () => {
+    const prev = document.title;
+    const base = (guide?.title ?? "travel-guide").replace(/[\\/?:*""<>|]/g, "_");
+    document.title = `${base} · 旅行手账`;
+    const restore = () => {
+      document.title = prev;
+      window.removeEventListener("afterprint", restore);
+    };
+    window.addEventListener("afterprint", restore);
+    window.print();
+  };
+
   if (loading && !guide) {
     return (
       <div className="container py-24 text-center text-muted-foreground">
@@ -182,7 +199,7 @@ export function GuidePage() {
     <div>
       {/* Cover band: gradient + emoji hero */}
       <section
-        className="flex h-40 items-center justify-center sm:h-52"
+        className="guide-cover flex h-40 items-center justify-center sm:h-52"
         style={{ background: guide.color }}
       >
         <RichText
@@ -231,11 +248,17 @@ export function GuidePage() {
               <RichText value={guide.badge} iconClassName="size-3.5 text-primary" />
             </div>
           )}
-          {isAdmin && !authLoading && !editing && (
-            <div className="flex justify-end">
-              <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
-                编辑攻略
+          {!editing && (
+            <div className="no-print flex items-center justify-end gap-2">
+              <Button size="sm" variant="outline" onClick={handleExportPdf}>
+                <Download className="size-4" />
+                导出 PDF
               </Button>
+              {isAdmin && !authLoading && (
+                <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
+                  编辑攻略
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -245,7 +268,7 @@ export function GuidePage() {
 
       {/* Sticky day subnav */}
       {days.length > 0 && (
-        <div className="sticky top-[60px] z-40 border-y bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="no-print sticky top-[60px] z-40 border-y bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/80">
           <div className="container py-2">
             <Tabs
               value={activeDay}

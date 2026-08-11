@@ -253,3 +253,81 @@
     }
   }
 }
+
+/* ===== 打印 / 导出 PDF（指南详情页「导出 PDF」按钮） =====
+   目标：把暗色主题渲染成干净的白纸黑字文档，隐藏导航/页脚/按钮/日期子导航，
+   保留封面底色，并避免区块被分页截断。 */
+@media print {
+  /* 强制还原为浅色主题变量（覆盖 .dark 的覆盖），
+     使所有 bg- 与 text- 类都落到浅色值，无需逐类清零。 */
+  :root,
+  html.dark {
+    color-scheme: light;
+    --background: 210 20% 98%;
+    --foreground: 222 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 30% 12%;
+    --secondary: 210 30% 96%;
+    --secondary-foreground: 222 30% 18%;
+    --muted: 210 30% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 95%;
+    --accent-foreground: 222 30% 18%;
+    --border: 214 25% 90%;
+    --input: 214 25% 90%;
+  }
+
+  html,
+  body {
+    background: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* 纸张边距 */
+  @page {
+    margin: 14mm;
+  }
+
+  /* 隐藏 UI 外壳：顶部导航、页脚、导出/编辑按钮、日期子导航 */
+  .no-print {
+    display: none !important;
+  }
+
+  /* 容器占满纸张内容宽度，去掉居中留白 */
+  .container {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* 封面底色在打印时保留（Chrome 默认会剥掉背景色） */
+  .guide-cover {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* 链接不要显示 URL、去掉下划线 */
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+  a[href]::after {
+    content: "" !important;
+  }
+
+  /* 避免「天 / 区块」被分页截断 */
+  [data-day],
+  .mb-10 {
+    break-inside: avoid;
+  }
+
+  /* 去掉阴影与毛玻璃（打印无意义） */
+  * {
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-shadow: none !important;
+  }
+}
