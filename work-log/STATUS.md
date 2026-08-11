@@ -1,6 +1,6 @@
 # 项目状态（STATUS）
 
-最后更新：**2026-08-10** ｜ 主仓库 HEAD：`2bca48a`（已推送 origin/main，Cloudflare 构建已触发）
+最后更新：**2026-08-11** ｜ 主仓库 HEAD：`7a789ca`（已推送 origin/main）｜ Skills 独立仓库：`git@github.com:heyxiaoze/skill.git`（`main`，已推送）
 
 ---
 
@@ -57,6 +57,17 @@
 - 本地 `tsc --noEmit` 已通过（0 错误）。本机 vite 已可启动（`npm run dev` → `http://localhost:5173/`，见下方风险项），可本地预览。
 
 > ⚠️ 已知限制：草稿（draft）攻略不会进入游客构建快照（`sync-content` 只收 published），目前**没有管理员专用拉取接口**，所以管理员在站点上还无法打开/编辑纯草稿（已发布的可正常编辑）。若需编辑草稿，需新增 `GET /api/guide/:id`（管理员鉴权）从内容仓库取任意状态攻略 —— 可并入 Phase 3。
+
+---
+
+### Skills 管理与小红书 MCP 接入（2026-08-11，已完成）
+
+- **三套 skills**：`travel-planner`、`travel-guide-addnote`、`xiaohongshu-mcp`。
+- **独立源真相仓库**：`Travel Guide App/skills/`（独立 git，已推送 `git@github.com:heyxiaoze/skill.git` 分支 `main`）。含 `install.sh`（同步到 `~/.workbuddy/skills/`）、`README.md`、`.gitignore`。
+- **主项目内无 vendored skills**：`travel-guide/.workbuddy/skills/` 已从磁盘删除（移至废纸篓可恢复），`.workbuddy/` 目录一并移除。WorkBuddy 从用户级 `~/.workbuddy/skills/` 加载，功能正常。
+- **小红书 MCP 接入**：`xpzouying/xiaohongshu-mcp`（v2.4.3）二进制在 `~/xiaohongshu-mcp/`，经 `~/.workbuddy/mcp.json` 注册（`http://localhost:18060/mcp`）。已登录（用户名 `xiaoze🌀木子. 🍜`），`search_feeds` 实测可用。
+- **工作流**：改 skills → 在 `skills/` 仓库改 → `bash install.sh` 同步 → （需要时在 `skills/` 仓库 `git commit`/`push`）。主站 Cloudflare 部署不依赖 skills。
+- ⚠️ 后台同步工具可能周期性删除 `.git`/`.workbuddy`，动 git 前先 `ls -a`；若 `~/.workbuddy/skills/` 被清，`bash install.sh` 一键恢复。
 
 ---
 

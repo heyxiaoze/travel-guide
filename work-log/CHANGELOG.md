@@ -4,6 +4,40 @@
 
 ---
 
+## 2026-08-11（Skills 接入与独立化）
+
+> 本日主题为 skills 的接入、打包、独立成仓库、移动到根目录、清理主仓库冗余并 push。详见 `work-log/2026-08-11.md` 流水。
+
+### 克隆与初始化
+- `git clone git@github.com:heyxiaoze/travel-guide.git`（`ad9a51d`）与 `git clone git@github.com:heyxiaoze/travel-guide-content.git`（`5067932`）到 `Travel Guide App/`。
+- 通过 `work-log/` 了解项目来龙去脉：Cloudflare Pages 旅行攻略站，Phase 0/1/2 已完成，Phase 3 未开始。
+
+### 安装项目内 skills（用户级）
+- 源 `travel-guide/.workbuddy/skills/`（`travel-planner`、`travel-guide-addnote`）安装到 `~/.workbuddy/skills/`。安全审计判定 P2（仅 Markdown + HTML，无脚本/外联/外泄）。
+
+### 小红书 MCP 调研与接入（提交于 skills 仓库）
+- `travel-planner` 原引用的 `jinjunzh/xiaohongshu-mcp` **已 404**，改用 **`xpzouying/xiaohongshu-mcp`**（v2.4.3）。工具名 `check_login_status`/`get_login_qrcode`/`search_feeds`/`get_feed_detail` 与 skill 调用一致。
+- 二进制下载至 `~/xiaohongshu-mcp/`，接入 `~/.workbuddy/mcp.json`（`http://localhost:18060/mcp`）。
+- 登录：扫码后 `✅ 已登录`（用户名 `xiaoze🌀木子. 🍜`），session 缓存可复用。实测 `search_feeds` 返回真实笔记，链路端到端可用。
+
+### 打包 xiaohongshu-mcp skill 进项目
+- 新建 `travel-guide/.workbuddy/skills/xiaohongshu-mcp/`（`SKILL.md`+`README.md`+`scripts/setup.sh`），并同步安装到 `~/.workbuddy/skills/`。两个 travel skill 的 MCP 依赖改为指向该打包 skill。
+
+### skills 独立源真相仓库（提交 `9ee5856`，已推送 `git@github.com:heyxiaoze/skill.git` `main`）
+- 三套 skill 复制为独立仓库（先 `travel-guide/skills/`，后移到 `Travel Guide App/skills/`），独立 `git init` + `install.sh` + `README.md` + `.gitignore`。
+- `install.sh`：把含 `SKILL.md` 的子目录同步到目标 `skills/`（默认 `~/.workbuddy/skills`，可传参）。
+- **全局 git 身份**：`user.name=heyxiaoze`、`user.email=heyxiaoze@icloud.com`。
+
+### 清理主仓库冗余 + 删除磁盘副本
+- 上一轮 `git rm --cached -r .workbuddy/skills`（主仓库不再跟踪 vendored skills）。
+- **本回**：从磁盘删除 `travel-guide/.workbuddy/skills/`（移至废纸篓可恢复），并 `rmdir` 空 `.workbuddy`。主项目根目录仅余源码与 `work-log/`，整洁。活动副本仍在 `~/.workbuddy/skills/`，功能不受影响。
+- 主仓库提交 `7a789ca`（已推送）：`.gitignore` 清理 + 移除 vendored skills + work-log 记录。
+
+### 工作流约定（站规）
+- 用户确认：**所有操作事项都要写记录到 work-log，直到新指示**。本日全部操作已同步至 CHANGELOG / STATUS。
+
+---
+
 ## 2026-08-10（本日）
 
 ### 阶段 2：站内区块编辑器（提交 `ff29efa`，已推送）
