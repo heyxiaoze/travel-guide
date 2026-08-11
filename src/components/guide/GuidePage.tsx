@@ -14,6 +14,7 @@ import { RichText } from "@/components/RichText";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { GuideEditor } from "./GuideEditor";
 import { TRAVEL_GUIDES } from "@/data/registry";
+import { getGuide } from "@/lib/content";
 import { useAuth } from "@/lib/auth";
 import type { Guide, Section } from "@/types/guide";
 
@@ -62,9 +63,31 @@ function FactBar({ guide }: { guide: Guide }) {
 
 export function GuidePage() {
   const { id } = useParams();
-  const guide = id ? TRAVEL_GUIDES[id] : undefined;
+  // Seed from the build-time snapshot, then upgrade to the live /guides/<id>.
+  const [guide, setGuide] = useState<Guide | undefined>(
+    id ? TRAVEL_GUIDES[id] : undefined
+  );
+  const [loading, setLoading] = useState(false);
   const { isAdmin, loading: authLoading } = useAuth();
   const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    if (!id) {
+      setGuide(undefined);
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    getGuide(id).then((g) => {
+      if (cancelled) return;
+      setGuide(g);
+      setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   // Flatten day blocks across all sections for the subnav + anchor ids.
   // Computed BEFORE the early returns below so that every hook is called
@@ -114,6 +137,12 @@ export function GuidePage() {
     return () => obs.disconnect();
   }, [guide, days.length]);
 
+  // When the live guide loads (e.g. an id not in the snapshot), make sure a
+  // day is pre-selected for the sticky subnav.
+  useEffect(() => {
+    if (!activeDay && days[0]) setActiveDay(String(days[0].index));
+  }, [days.length, activeDay]);
+
   if (guide && editing && isAdmin) {
     return <GuideEditor guide={guide} onClose={() => setEditing(false)} />;
   }
@@ -122,6 +151,14 @@ export function GuidePage() {
     const el = document.getElementById(`day-${index}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  if (loading && !guide) {
+    return (
+      <div className="container py-24 text-center text-muted-foreground">
+        加载中…
+      </div>
+    );
+  }
 
   if (!guide) {
     return (

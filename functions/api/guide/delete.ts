@@ -1,11 +1,8 @@
 // POST /api/guide/delete { id } -> admin-gated. Deletes guides/<id>.json and
-// removes it from guides/index.json, then triggers a Deploy Hook.
+// removes it from guides/index.json. The live site reflects the removal via the
+// /guides Function (runtime read) — no travel-guide rebuild.
 import { getCookie, verifySession, json } from "../../_lib/auth";
-import {
-  deleteGuide,
-  removeIndexEntry,
-  triggerDeploy,
-} from "../../_lib/github";
+import { deleteGuide, removeIndexEntry } from "../../_lib/github";
 
 export async function onRequestPost(context: any) {
   const { request, env } = context;
@@ -20,7 +17,6 @@ export async function onRequestPost(context: any) {
   try {
     await deleteGuide(env, id);
     await removeIndexEntry(env, id);
-    await triggerDeploy(env.DEPLOY_HOOK_URL);
     return json({ ok: true, id });
   } catch (e: any) {
     return json({ ok: false, error: e?.message ?? "delete failed" }, 500);

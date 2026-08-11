@@ -10,13 +10,13 @@
 ## 2. 技术栈
 - React 18 + Vite + TypeScript
 - shadcn/ui 组件库（Radix + Tailwind）
-- 数据层：构建期由 `scripts/sync-content.mjs` 从 `travel-guide-content` 仓拉取「已发布」攻略，生成 `src/data/generated.ts`（`CONTENT_GUIDES` / `CONTENT_ORDER`），`registry.ts` 仅消费它
-- 内容源：`travel-guide-content/*.json`
+- 数据层：游客读取走**运行时** `functions/guides/[[id]].ts`（Cloudflare Function）——每次请求时从 `travel-guide-content` 仓拉取「已发布」攻略（边缘缓存约 1 分钟，`GUIDE_CACHE_SMAXAGE` 可调）；`src/data/registry.ts` 仅消费构建期生成的 `generated.ts` 快照作「内容仓不可达」时的离线兜底
+- 内容源：`travel-guide-content/*.json`（运行时读取的唯一真相源；只改它、不提交/部署主仓库，线上约 1 分钟生效）
 
 ## 3. 约定
-- 新增攻略 / 笔记走 `travel-guide-addnote` skill，落成 `travel-guide-content/guides/<id>.json` 并登记 `guides/index.json`（`status: "published"`）；`src/data/` 不再存攻略内容，仅由构建期生成的 `generated.ts` 快照消费
+- 新增攻略 / 笔记走 `travel-guide-addnote` skill，落成 `travel-guide-content/guides/<id>.json` 并登记 `guides/index.json`（`status: "published"`）；`src/data/` 不再存攻略内容，游客经 `/guides` Function **运行时读取**，构建期生成的 `generated.ts` 仅作离线兜底
 - 样式遵循 shadcn 主题 token，支持明暗切换；提交前确保 `npm run build` 通过
-- 目录：`src/data/`（`registry.ts` + 构建期生成、被 gitignore 的 `generated.ts` 快照，**不含攻略内容**）、`src/components/`（UI）、`travel-guide-content/`（攻略唯一真相源：`guides/*.json` + `index.json`）
+- 目录：`src/data/`（`registry.ts` + 构建期生成、被 gitignore 的 `generated.ts` 快照，**不含攻略内容**）、`src/components/`（UI）、`functions/guides/[[id]].ts`（游客运行时读取 Function）、`travel-guide-content/`（攻略唯一真相源：`guides/*.json` + `index.json`）
 
 ## 4. 设计规范
 - 组件：shadcn/ui（Radix + Tailwind）；主题 light / dark 跟随系统、可手动切换

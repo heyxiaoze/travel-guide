@@ -1,7 +1,8 @@
 // GitHub Contents API helpers. Guides live in the public content repo
 // (e.g. heyxiaoze/travel-guide-content) as guides/<id>.json + guides/index.json.
-// Admin writes go through a PAT (GITHUB_TOKEN) and a commit is created on `main`;
-// a Deploy Hook is then fired so the static site rebuilds and picks up the change.
+// Admin writes go through a PAT (GITHUB_TOKEN) and a commit is created on `main`.
+// Visitors read content at request time via the /guides Function (runtime read),
+// so no travel-guide rebuild is needed after a content change.
 
 interface GithubEnv {
   GITHUB_TOKEN: string;
@@ -182,13 +183,4 @@ export async function removeIndexEntry(
     `index: remove ${id}`,
     existing.sha,
   );
-}
-
-export async function triggerDeploy(hookUrl: string | undefined): Promise<void> {
-  if (!hookUrl) return;
-  try {
-    await fetch(hookUrl, { method: "POST" });
-  } catch {
-    // non-fatal: rebuild can also be triggered manually
-  }
 }

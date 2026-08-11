@@ -1,9 +1,11 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Empty, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
 import { ShiningButton } from "@/components/ui/shining-button";
 import { GUIDE_ORDER, TRAVEL_GUIDES } from "@/data/registry";
+import { getGuides } from "@/lib/content";
+import type { Guide } from "@/types/guide";
 import { useCountUp } from "@/hooks/useCountUp";
 import { GuideCard } from "@/components/guide/GuideCard";
 import { HeroTextHover, type HeroHoverEmoji } from "@/animata/hero/hero-section-text-hover";
@@ -49,7 +51,20 @@ function MetaItem({
 }
 
 export function HomePage() {
-  const guides = GUIDE_ORDER.map((id) => TRAVEL_GUIDES[id]).filter(Boolean);
+  // Seed from the build-time snapshot so first paint has no flash, then upgrade
+  // to the live /guides list (content repo) once it resolves.
+  const [guides, setGuides] = useState<Guide[]>(() =>
+    GUIDE_ORDER.map((id) => TRAVEL_GUIDES[id]).filter(Boolean) as Guide[]
+  );
+  useEffect(() => {
+    let cancelled = false;
+    getGuides().then((g) => {
+      if (!cancelled) setGuides(g);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const gridRef = useRef<HTMLDivElement>(null);
 
   const LAST_TRIP_DATE = new Date(2026, 4, 5); // 2026-05-05

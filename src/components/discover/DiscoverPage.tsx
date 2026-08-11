@@ -1,9 +1,11 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { GUIDE_ORDER, TRAVEL_GUIDES } from "@/data/registry";
+import { getGuides } from "@/lib/content";
+import type { Guide } from "@/types/guide";
 import {
   filterAndSort,
   distinctRegions,
@@ -38,10 +40,19 @@ function FilterChip({
 }
 
 export function DiscoverPage() {
-  const all = useMemo(
-    () => GUIDE_ORDER.map((id) => TRAVEL_GUIDES[id]).filter(Boolean),
-    []
+  // Seed from the build-time snapshot, then upgrade to the live /guides list.
+  const [all, setAll] = useState<Guide[]>(() =>
+    GUIDE_ORDER.map((id) => TRAVEL_GUIDES[id]).filter(Boolean) as Guide[]
   );
+  useEffect(() => {
+    let cancelled = false;
+    getGuides().then((g) => {
+      if (!cancelled) setAll(g);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const regions = useMemo(() => distinctRegions(all), [all]);
   const years = useMemo(() => distinctYears(all), [all]);
 
