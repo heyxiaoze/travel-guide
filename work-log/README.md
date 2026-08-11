@@ -74,6 +74,12 @@
 
 > 按 §7 每次提交必写。格式：日期 · 类型 · 提交号（短 hash）· 已推送（✓ / ✗）· 一句话说明。
 
+- **2026-08-11 · 功能 · `fab20d0`(travel-guide) · ✓ · 指南详情页增加「导出 PDF」按钮（window.print + @media print 浅色化，no-print 隐藏外壳，保留封面底色）**
+  - 决策：攻略详情页提供「导出 PDF」按钮，复用浏览器打印管线（`window.print`），用户在打印对话框选「存储为 PDF」；`@media print` 强制浅色主题（覆盖 `.dark` 变量）、Header/Footer/操作区/日期子导航加 `no-print` 隐藏、封面底色 `print-color-adjust:exact` 保留、避免区块分页截断。
+  - 动机：用户要求指南可离线/打印留存。纯客户端实现，无需内容仓或 Function 改动。
+  - 副作用：需 CF 重新构建静态产物上线（已随 push 自动触发）；暗色主题下打印自动转浅色，不影响屏幕显示。
+  - 关联：Notion Dev Tasks / Changelog 同步；SOP §10 双源同步。
+
 - **2026-08-11 · 功能/迁移 · `0a34fff`(travel-guide) · ✓ · 游客读取改为运行时经 `/guides` Function 拉取内容仓，彻底免重建**
   - 决策：游客只读路径不再依赖构建期 `generated.ts` 快照，改为 Cloudflare Function `functions/guides/[[id]].ts` 在**请求时**从 `travel-guide-content` 仓拉取已发布攻略（边缘缓存 `s-maxage=60` + `stale-while-revalidate`），`generated.ts` 降级为「内容仓不可达」时的离线兜底；`src/lib/content.ts` 先渲染快照再升级为运行时数据（无闪烁）。
   - 动机：用户要求「只更新内容仓库就上线、不提交/部署主仓库」。原构建期快照模型下线上是静态产物，必须触发 `travel-guide` 重建才生效；改为运行时读取后，内容仓 `main` 分支更新约 1 分钟内自动上线。
