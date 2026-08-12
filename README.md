@@ -1,20 +1,20 @@
 # 旅行手账 · Travel Guide
 
-一个**个人旅行攻略站**：把每次出行的路线、花费、避坑、美食沉淀成一篇篇可检索、可分享的攻略页。技术上是 **React + Vite + TypeScript** 单页应用（SPA），数据驱动——每篇攻略就是一个数据对象（存于 `travel-guide-content` 内容仓库的 `guides/<id>.json`），由统一的区块渲染器呈现。可一键部署到 **Cloudflare Pages**（免费）。
+一个**个人旅行指南站**：把每次出行的路线、花费、避坑、美食沉淀成一篇篇可检索、可分享的指南页。技术上是 **React + Vite + TypeScript** 单页应用（SPA），数据驱动——每篇指南就是一个数据对象（存于 `travel-guide-content` 内容仓库的 `guides/<id>.json`），由统一的区块渲染器呈现。可一键部署到 **Cloudflare Pages**（免费）。
 
 > 项目内已内置两个 WorkBuddy 技能（位于 `.workbuddy/skills/`）：
-> - **`travel-guide-addnote`** —— 给本站新增一篇攻略（融合「小红书 + web 调研 → 路线规划 → 落成 `travel-guide-content` 仓的 `guides/<id>.json`」工作流）。
-> - **`travel-planner`** —— 通用旅行攻略生成器（产出独立 HTML，不依赖本站）。
+> - **`travel-guide-addnote`** —— 给本站新增一篇指南（融合「小红书 + web 调研 → 路线规划 → 落成 `travel-guide-content` 仓的 `guides/<id>.json`」工作流）。
+> - **`travel-planner`** —— 通用旅行指南生成器（产出独立 HTML，不依赖本站）。
 > Fork 本项目后，用 WorkBuddy 打开即可直接使用这两个技能。
 
 ## 主要功能
 
-- **数据驱动的攻略体系（运行时读取 · 免重建）**：每篇攻略 = `travel-guide-content/guides/<id>.json`（含 `status`）里的对象。**游客读取走运行时 `functions/guides/[[id]].ts` 这个 Cloudflare Function**——每次请求时从内容仓库拉取（经边缘缓存），所以**只更新内容仓库、不用提交/部署主仓库，线上就会拉到最新**。构建期 `scripts/sync-content.mjs` 仍会生成 `src/data/generated.ts` 快照，但仅作「内容仓库不可达」时的离线兜底，不再是必经路径；`registry.ts` 消费该快照作兜底。
-- **统一的区块渲染**：`text / callout / place / places / points / checklist / table / day / food / budget / summary / gallery` 共 12 种区块类型，由 `BlockRenderer` 统一渲染。写攻略就是组合这些区块。
+- **数据驱动的指南体系（运行时读取 · 免重建）**：每篇指南 = `travel-guide-content/guides/<id>.json`（含 `status`）里的对象。**游客读取走运行时 `functions/guides/[[id]].ts` 这个 Cloudflare Function**——每次请求时从内容仓库拉取（经边缘缓存），所以**只更新内容仓库、不用提交/部署主仓库，线上就会拉到最新**。构建期 `scripts/sync-content.mjs` 仍会生成 `src/data/generated.ts` 快照，但仅作「内容仓库不可达」时的离线兜底，不再是必经路径；`registry.ts` 消费该快照作兜底。
+- **统一的区块渲染**：`text / callout / place / places / points / checklist / table / day / food / budget / summary / gallery` 共 12 种区块类型，由 `BlockRenderer` 统一渲染。写指南就是组合这些区块。
 - **按天时间轴（核心）**：`day` 区块把每天的行程做成时间轴，支持时间点、地点（一键复制导航串）、标签自动配色（免费/预约/拍照/换电/洗澡/可选/补给）、过夜点、吃饭点。
-- **首页概览 + 发现页**：首页动态标题、模糊光斑背景、数字滚动统计、攻略卡片网格；`/discover` 可做筛选。
+- **首页概览 + 发现页**：首页动态标题、模糊光斑背景、数字滚动统计、指南卡片网格；`/discover` 可做筛选。
 - **暗色模式 + 响应式**：跟随系统，localStorage 持久化；移动端友好。
-- **小红书 / web 调研工作流**（通过 `travel-guide-addnote` 技能）：新增攻略时先自动研究目的地（真实花费、踩坑、机位、预约），再规划路线，最后落成内容仓库的 `guides/<id>.json`（并登记 `index.json`）。
+- **小红书 / web 调研工作流**（通过 `travel-guide-addnote` 技能）：新增指南时先自动研究目的地（真实花费、踩坑、机位、预约），再规划路线，最后落成内容仓库的 `guides/<id>.json`（并登记 `index.json`）。
 
 ## 技术栈 / 所需依赖
 
@@ -80,8 +80,8 @@ npm run deploy               # = npm run build && wrangler pages deploy dist
 - `GET  /api/me` —— 返回当前是否管理员（`{ isAdmin }`）。
 - `POST /api/login` —— 校验密码（对比 `ADMIN_PASSWORD`），成功下发**签名 HttpOnly Cookie**（密码本身不进 Cookie，也不进前端包）。
 - `POST /api/logout` —— 清除会话 Cookie。
-- `POST /api/guide/save` —— 管理员门禁；把攻略 JSON 写入内容仓库 `guides/<id>.json` 并更新 `guides/index.json`。游客侧经 `/guides` Function 运行时读取，变更无需重建站点。
-- `POST /api/guide/delete` —— 管理员门禁；删除攻略并从索引移除。
+- `POST /api/guide/save` —— 管理员门禁；把指南 JSON 写入内容仓库 `guides/<id>.json` 并更新 `guides/index.json`。游客侧经 `/guides` Function 运行时读取，变更无需重建站点。
+- `POST /api/guide/delete` —— 管理员门禁；删除指南并从索引移除。
 
 > 顶栏右上角已有「登录 / 退出」按钮与登录弹窗。区块编辑 UI（Phase 2）与历史版本查看（基于内容仓库的 Git 提交历史，Phase 3）将在后续接入——届时管理员可在网页上直接增删改区块、查看/恢复历史版本。
 
@@ -90,7 +90,7 @@ npm run deploy               # = npm run build && wrangler pages deploy dist
 | 变量 | 说明 |
 |------|------|
 | `ADMIN_PASSWORD` | 管理员密码（即你提到的 CF “admin” 文本变量）。登录弹窗填写此值。 |
-| `GITHUB_TOKEN` | 具有 `repo` 权限的 GitHub PAT，用于把攻略写回内容仓库。 |
+| `GITHUB_TOKEN` | 具有 `repo` 权限的 GitHub PAT，用于把指南写回内容仓库。 |
 | `CONTENT_REPO` | 内容仓库，格式 `owner/repo`（公开；站点经 `/guides` Function 运行时读取，默认 `heyxiaoze/travel-guide-content`）。 |
 | `CONTENT_REF` | 内容仓库分支，默认 `main`。 |
 | `GUIDE_CACHE_SMAXAGE` | 可选；`/guides` 边缘缓存秒数，默认 `60`（改完内容约 1 分钟内全量生效）。 |
@@ -98,10 +98,10 @@ npm run deploy               # = npm run build && wrangler pages deploy dist
 - **生产**：Cloudflare Dashboard → Pages → 你的项目 → **Settings → Environment variables**，以 **Secret** 类型添加上表变量（Secret 不会进入构建产物）。
 - **本地开发**：复制 `.dev.vars.example` 为 `.dev.vars` 填入同样的值，然后 `npm run dev:cf`（`wrangler pages dev` 会加载 `.dev.vars` 并提供 `/api/*` 路由）。
 
-## 如何新增一篇攻略
+## 如何新增一篇指南
 
-> 攻略内容的【唯一真相源】是独立的内容仓库 `travel-guide-content`（`guides/<id>.json` + `guides/index.json`，每篇含 `status: "draft" | "published"`）。
-> **游客读取走运行时 `/guides` Function**：每次请求时从内容仓库拉取已发布攻略（边缘缓存约 1 分钟），所以**只改内容仓库、不用提交或重新部署主仓库，线上就会拉到最新**。构建期 `scripts/sync-content.mjs` 仍会生成 `src/data/generated.ts` 快照，但仅作「内容仓库不可达」时的离线兜底。`src/data/` **不再存放攻略内容**，只保留 `registry.ts` 与构建期生成的 `generated.ts` 快照。
+> 指南内容的【唯一真相源】是独立的内容仓库 `travel-guide-content`（`guides/<id>.json` + `guides/index.json`，每篇含 `status: "draft" | "published"`）。
+> **游客读取走运行时 `/guides` Function**：每次请求时从内容仓库拉取已发布指南（边缘缓存约 1 分钟），所以**只改内容仓库、不用提交或重新部署主仓库，线上就会拉到最新**。构建期 `scripts/sync-content.mjs` 仍会生成 `src/data/generated.ts` 快照，但仅作「内容仓库不可达」时的离线兜底。`src/data/` **不再存放指南内容**，只保留 `registry.ts` 与构建期生成的 `generated.ts` 快照。
 
 
 
@@ -109,9 +109,9 @@ npm run deploy               # = npm run build && wrangler pages deploy dist
 
 项目已把该技能打包进 `.workbuddy/skills/`。**Fork 或克隆本项目后，用 WorkBuddy 打开项目即可直接使用**（WorkBuddy 会自动加载仓库内的项目级技能）：
 
-1. 在 WorkBuddy 里对本项目说「**加一篇攻略**」「**新增旅行笔记**」或「**再来一个目的地**」。
+1. 在 WorkBuddy 里对本项目说「**加一篇指南**」「**新增旅行笔记**」或「**再来一个目的地**」。
 2. 技能会先和你确认需求（目的地 / 日期天数 / 出行方式 / 同行 / 偏好 / 预算），随后**自动**用小红书 + web 把目的地调研透、规划路线，最后落成 `travel-guide-content/guides/<id>.json` 并登记进 `guides/index.json`（`status: "published"`）。
-3. 校验：本地 `npm run build` 会对内容仓库 JSON 做类型/结构校验（构建期自动从内容仓库拉取生成快照），但**线上无需重新部署主仓库**——推完内容仓库后，站点经 `/guides` Function 在约 1 分钟内自动拉到新攻略。
+3. 校验：本地 `npm run build` 会对内容仓库 JSON 做类型/结构校验（构建期自动从内容仓库拉取生成快照），但**线上无需重新部署主仓库**——推完内容仓库后，站点经 `/guides` Function 在约 1 分钟内自动拉到新指南。
 
 > 该技能的完整区块字段参考见 `.workbuddy/skills/travel-guide-addnote/references/block-types.md`。
 
@@ -127,8 +127,8 @@ npm run deploy               # = npm run build && wrangler pages deploy dist
 ```
 src/
   data/
-    registry.ts        # 攻略注册表：仅消费 generated.ts 快照（TRAVEL_GUIDES + GUIDE_ORDER）
-    generated.ts       # ⚠️ 构建期自动生成（gitignore），从 travel-guide-content 仓拉取已发布攻略，勿手改
+    registry.ts        # 指南注册表：仅消费 generated.ts 快照（TRAVEL_GUIDES + GUIDE_ORDER）
+    generated.ts       # ⚠️ 构建期自动生成（gitignore），从 travel-guide-content 仓拉取已发布指南，勿手改
   types/guide.ts       # Guide / Block 类型定义（数据结构的唯一事实来源）
   components/          # BlockRenderer 与各区块组件、首页/发现页/详情页
   lib/icons.tsx        # ICON_MAP（{{icon:name}} → Lucide）
@@ -136,7 +136,7 @@ src/
 wrangler.toml          # Cloudflare Pages 部署配置
 public/_redirects      # SPA 路由回退
 functions/guides/[[id]].ts  # 游客运行时读取：GET /guides 列表 / GET /guides/<id> 单篇（边缘缓存，免重建）
-# 攻略内容在同级内容仓库 travel-guide-content/guides/*.json（唯一真相源）
+# 指南内容在同级内容仓库 travel-guide-content/guides/*.json（唯一真相源）
 ```
 
 ## 许可

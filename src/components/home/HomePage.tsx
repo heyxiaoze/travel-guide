@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Empty, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
-import { ShiningButton } from "@/components/ui/shining-button";
 import { GUIDE_ORDER, TRAVEL_GUIDES } from "@/data/registry";
+import SlideArrowButton from "@/animata/button/slide-arrow-button";
 import { getGuides } from "@/lib/content";
 import type { Guide } from "@/types/guide";
 import { useCountUp } from "@/hooks/useCountUp";
@@ -65,16 +65,13 @@ export function HomePage() {
       cancelled = true;
     };
   }, []);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const LAST_TRIP_DATE = new Date(2026, 4, 5); // 2026-05-05
   const daysSinceLastTrip = Math.max(
     0,
     Math.floor((Date.now() - LAST_TRIP_DATE.getTime()) / 86400000)
   );
-
-  const scrollToGuides = () =>
-    gridRef.current?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <>
@@ -99,16 +96,11 @@ export function HomePage() {
                 的东西
               </h1>
               <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-                你好，我是小泽（慢慢），一个东北版 ISTJ 的蓝老头，我的攻略都是简单粗暴很丐很丐的版本，留足
+                你好，我是小泽（慢慢），一个东北版 ISTJ 的蓝老头，我的指南都是简单粗暴很丐很丐的版本，留足
                 buffer 让路上一切变化，随时有 planB 兜底
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <ShiningButton onClick={scrollToGuides}>浏览全部攻略</ShiningButton>
-                {guides.length > 0 && (
-                  <ShiningButton to={`/guide/${guides[0].id}`} variant="outline">
-                    最新一篇
-                  </ShiningButton>
-                )}
+                <SlideArrowButton text="浏览全部指南" onClick={() => navigate("/discover")} />
               </div>
             </div>
           </div>
@@ -123,7 +115,7 @@ export function HomePage() {
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
-                <MetaItem k="攻略" value={guides.length} suffix="篇" />
+                <MetaItem k="指南" value={guides.length} suffix="篇" />
                 <MetaItem k="已去城市" value={95} suffix="个" />
                 <MetaItem k="已自驾行驶" value={20000} suffix="km+" />
                 <MetaItem k="距上次出去玩已过去" value={daysSinceLastTrip} suffix="天" />
@@ -136,7 +128,7 @@ export function HomePage() {
       <section className="py-12">
         <div className="container">
           <div className="mb-6 flex items-baseline gap-3">
-            <h2 className="text-xl font-bold tracking-tight">全部攻略</h2>
+            <h2 className="text-xl font-bold tracking-tight">全部指南</h2>
             <span className="text-sm text-muted-foreground">
               {guides.length} 篇
             </span>
@@ -152,8 +144,7 @@ export function HomePage() {
           {guides.length > 0 ? (
             <div
               id="guides"
-              ref={gridRef}
-              className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+              className="grid grid-cols-1 gap-5 sm:grid-cols-2"
             >
               {guides.map((g) => (
                 <GuideCard key={g.id} guide={g} />
@@ -161,7 +152,7 @@ export function HomePage() {
             </div>
           ) : (
             <Empty>
-              <EmptyTitle>还没有攻略</EmptyTitle>
+              <EmptyTitle>还没有指南</EmptyTitle>
               <EmptyDescription>
                 把数据文件放进 data/ 并在入口引入即可。
               </EmptyDescription>

@@ -7,7 +7,7 @@ export function Footer() {
         <div>
           用{" "}
           <Heart className="mx-1 inline size-3.5 text-rose-500 align-[-2px]" />
-          {" "}写的很丐很丐的旅行攻略
+          {" "}写的很丐很丐的旅行指南
         </div>
         <div className="font-mono text-xs text-muted-foreground/70">
           Content curated &amp; planned by xiaoze · No unauthorized reposting

@@ -1,0 +1,8 @@
+{
+  "date": "2026-08-12",
+  "font_stack": "Inter + Noto Sans SC (tailwind.config.js)",
+  "palette": "HSL custom properties in src/index.css :root; primary purple 262 83% 58%",
+  "motion": "Tailwind animate plugin + tailwindcss-animate; custom fade-up keyframes; no framer-motion/gsap/lenis",
+  "spacing": "Tailwind default scale + container padding 1.5rem",
+  "framework": "React 18 + Vite + Tailwind v3 + shadcn/ui"
+}

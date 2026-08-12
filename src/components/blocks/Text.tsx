@@ -6,7 +6,7 @@ const NUMS = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "�
 export function TextBlockView({ block }: { block: TextBlock }) {
   const paras = Array.isArray(block.s) ? block.s : [block.s];
   return (
-    <div className="max-w-[720px] text-[15px] leading-relaxed text-foreground/90">
+    <div className="text-[15px] leading-relaxed text-foreground/90">
       {paras.map((p, i) => (
         <p key={i} className="mb-3">
           <RichText value={p} />

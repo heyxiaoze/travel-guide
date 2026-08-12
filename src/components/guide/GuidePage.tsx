@@ -12,6 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyTitle, EmptyActions } from "@/components/ui/empty";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RichText } from "@/components/RichText";
+import SplitReveal from "@/animata/preloader/split-reveal";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { GuideEditor } from "./GuideEditor";
 import { TRAVEL_GUIDES } from "@/data/registry";
@@ -32,7 +33,7 @@ function SectionHeader({ section }: { section: Section }) {
         {section.title}
       </h2>
       {section.lead && (
-        <p className="max-w-[760px] text-sm leading-relaxed text-muted-foreground">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           <RichText value={section.lead} />
         </p>
       )}
@@ -68,23 +69,40 @@ export function GuidePage() {
   const [guide, setGuide] = useState<Guide | undefined>(
     id ? TRAVEL_GUIDES[id] : undefined
   );
-  const [loading, setLoading] = useState(false);
+  // `guideResolved` flips true once getGuide() settles (found or not). The
+  // SplitReveal preloader uses it as its `ready` signal so the shutters only
+  // open after the guide is actually available.
+  const [guideResolved, setGuideResolved] = useState(() =>
+    id ? !!TRAVEL_GUIDES[id] : true
+  );
+  // `preloadActive` keeps the preloader mounted through the reveal animation.
+  // Armed on every guide-entry so the SplitReveal intro plays for all guides
+  // (snapshot guides resolve near-instantly but still get the full reveal).
+  const [preloadActive, setPreloadActive] = useState(() => (id ? true : false));
   const { isAdmin, loading: authLoading } = useAuth();
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (!id) {
       setGuide(undefined);
-      setLoading(false);
+      setGuideResolved(true);
+      setPreloadActive(false);
       return;
     }
     let cancelled = false;
-    setLoading(true);
-    getGuide(id).then((g) => {
-      if (cancelled) return;
-      setGuide(g);
-      setLoading(false);
-    });
+    setGuideResolved(false);
+    setPreloadActive(true);
+    getGuide(id)
+      .then((g) => {
+        if (cancelled) return;
+        setGuide(g);
+        setGuideResolved(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setGuide(undefined);
+        setGuideResolved(true);
+      });
     return () => {
       cancelled = true;
     };
@@ -169,11 +187,30 @@ export function GuidePage() {
     window.print();
   };
 
-  if (loading && !guide) {
+  if (preloadActive) {
     return (
-      <div className="container py-24 text-center text-muted-foreground">
-        加载中…
-      </div>
+      <SplitReveal
+        ready={guideResolved}
+        backgroundColor="hsl(var(--background))"
+        foregroundColor="hsl(var(--foreground))"
+        onComplete={() => setPreloadActive(false)}
+      >
+        <SplitReveal.Overlay>
+          <SplitReveal.Shutter side="top" />
+          <SplitReveal.Shutter side="bottom" />
+          <SplitReveal.Progress>
+            <div className="flex flex-col items-center justify-center gap-3">
+              <RichText
+                value={guide?.emoji ?? "{{icon:compass}}"}
+                iconClassName="size-10 text-primary drop-shadow"
+              />
+              <p className="text-sm font-medium tracking-[0.2em] text-muted-foreground">
+                正在打开指南…
+              </p>
+            </div>
+          </SplitReveal.Progress>
+        </SplitReveal.Overlay>
+      </SplitReveal>
     );
   }
 
@@ -181,8 +218,8 @@ export function GuidePage() {
     return (
       <div className="container py-24">
         <Empty>
-          <EmptyTitle>没有找到这篇攻略</EmptyTitle>
-          <EmptyDescription>链接可能已失效，或攻略尚未发布。</EmptyDescription>
+          <EmptyTitle>没有找到这篇指南</EmptyTitle>
+          <EmptyDescription>链接可能已失效，或指南尚未发布。</EmptyDescription>
           <EmptyActions>
             <Link to="/" className={buttonVariants()}>
               返回首页
@@ -235,18 +272,27 @@ export function GuidePage() {
 
         {/* Title block */}
         <div className="mt-4 flex flex-col gap-3">
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-            {guide.title}
-          </h1>
+          {/* Title + badge share one line: vertically centered, left-aligned */}
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+              {guide.title}
+            </h1>
+            {guide.badge && (
+              <div
+                className="inline-flex w-fit self-stretch items-center rounded-md px-4 text-base font-medium text-white"
+                style={{ background: guide.color }}
+              >
+                {/* icon stripped: only the label text remains */}
+                <RichText
+                  value={guide.badge.replace(/^\{\{icon:[a-z0-9-]+\}\}\s*/, "")}
+                />
+              </div>
+            )}
+          </div>
           {guide.subtitle && (
-            <p className="max-w-[760px] text-base text-muted-foreground sm:text-lg">
+            <p className="text-base text-muted-foreground sm:text-lg">
               {guide.subtitle}
             </p>
-          )}
-          {guide.badge && (
-            <div className="inline-flex w-fit items-center gap-1.5 rounded-full border bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
-              <RichText value={guide.badge} iconClassName="size-3.5 text-primary" />
-            </div>
           )}
           {!editing && (
             <div className="no-print flex items-center justify-end gap-2">
@@ -256,7 +302,7 @@ export function GuidePage() {
               </Button>
               {isAdmin && !authLoading && (
                 <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
-                  编辑攻略
+                  编辑指南
                 </Button>
               )}
             </div>

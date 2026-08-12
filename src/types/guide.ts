@@ -179,7 +179,7 @@ export interface Guide {
   updatedAt?: string;
   /** 出行形式，可多选：如 ["自驾", "公共交通"]。缺省时由 guide-filters 推断。 */
   modes?: string[];
-  /** 本篇攻略去过的城市数（不含常住地，由作者维护）。用于首页统计。 */
+  /** 本篇指南去过的城市数（不含常住地，由作者维护）。用于首页统计。 */
   cities?: number;
   title: string;
   subtitle?: string;

@@ -82,9 +82,9 @@ export function DiscoverPage() {
   return (
     <div className="container py-8">
       <div className="mb-5">
-        <h1 className="text-2xl font-bold tracking-tight">发现攻略</h1>
+        <h1 className="text-2xl font-bold tracking-tight">发现指南</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          共 {all.length} 篇攻略，可按条件筛选与排序。
+          共 {all.length} 篇指南，可按条件筛选与排序。
         </p>
       </div>
 
@@ -226,14 +226,14 @@ export function DiscoverPage() {
 
       <div className="mt-6">
         {result.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {result.map((g) => (
               <GuideCard key={g.id} guide={g} />
             ))}
           </div>
         ) : (
           <Empty>
-            <EmptyTitle>没有匹配的攻略</EmptyTitle>
+            <EmptyTitle>没有匹配的指南</EmptyTitle>
             <EmptyDescription>
               试着放宽筛选条件，或点击「重置」。
             </EmptyDescription>

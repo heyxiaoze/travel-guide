@@ -107,7 +107,7 @@
 
 /* 首屏容器：读取浏览器高度并占满（减去 sticky Header 的 60px）。
    section[1] 自适应剩余空间、section[2] 固定 220px。
-   section[3] 攻略网格在本容器之外，首屏不显示但滚动后可见。 */
+   section[3] 指南网格在本容器之外，首屏不显示但滚动后可见。 */
 .home-viewport {
   height: calc(100vh - 60px);
   height: calc(100dvh - 60px);
@@ -329,5 +329,43 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     text-shadow: none !important;
+  }
+}
+
+/* GuideCard 右下角箭头按钮：用卡片的渐变色（--card-accent 为 linear-gradient）
+   作为背景。渐变不能作为 background-color / color / color-mix 的参数，故改用
+   ::before 图层承载 background-image，默认低透明度、hover 时铺满。 */
+.guide-arrow {
+  position: relative;
+  overflow: hidden;
+  background-color: transparent;
+}
+.guide-arrow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--card-accent);
+  opacity: 0.14;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+.group:hover .guide-arrow::before,
+.guide-arrow:hover::before {
+  opacity: 1;
+}
+.guide-arrow > svg {
+  position: relative;
+  z-index: 1;
+  color: var(--foreground);
+  transition: color 0.3s ease;
+}
+.group:hover .guide-arrow > svg,
+.guide-arrow:hover > svg {
+  color: #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-arrow::before,
+  .guide-arrow > svg {
+    transition: none;
   }
 }

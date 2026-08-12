@@ -31,7 +31,7 @@ export function extractDate(subtitle?: string): string {
   return m ? m[1] : "";
 }
 
-/** 累计自驾里程（km）。从各攻略 facts 中的「总里程」解析并求和。 */
+/** 累计自驾里程（km）。从各指南 facts 中的「总里程」解析并求和。 */
 export function totalDrivingKm(guides: Guide[]): number {
   let km = 0;
   for (const g of guides) {
