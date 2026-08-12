@@ -6,7 +6,7 @@ import { RichText } from "@/components/RichText";
 import { PlaceChip } from "./Place";
 import type { DayBlock } from "@/types/guide";
 
-const TAG_STYLES: Record<string, string> = {
+export const TAG_STYLES: Record<string, string> = {
   free: "bg-success/10 text-success border-success/20",
   book: "bg-warning/10 text-warning border-warning/20",
   photo: "bg-secondary text-secondary-foreground border-border",
@@ -17,7 +17,7 @@ const TAG_STYLES: Record<string, string> = {
   neutral: "bg-muted text-muted-foreground border-border",
 };
 
-function tagClass(t: string): string {
+export function tagClass(t: string): string {
   if (/免费|不收费/.test(t)) return TAG_STYLES.free;
   if (/预约|需约|必抢|抢票/.test(t)) return TAG_STYLES.book;
   if (/拍照|出片|摄影/.test(t)) return TAG_STYLES.photo;

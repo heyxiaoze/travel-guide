@@ -1,0 +1,16 @@
+[
+  {
+    "date": "2026-08-12",
+    "macrostructure": "Detail Page (itinerary-led)",
+    "theme": "project-tokens (shadcn HSL) · studied-DNA trip.com hotel detail",
+    "enrichment": "none (typography + data-driven gradient only)",
+    "brief": "GuidePage 指南详情页重设计（trip.com 酒店详情 DNA）"
+  },
+  {
+    "date": "2026-08-12",
+    "macrostructure": "Card (guide list item)",
+    "theme": "playful · studied-DNA (stacked pastel job cards)",
+    "enrichment": "none",
+    "brief": "GuideCard 指南卡片重设计（Hallmark）"
+  }
+]

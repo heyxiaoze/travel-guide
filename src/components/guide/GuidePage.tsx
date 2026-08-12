@@ -1,3 +1,8 @@
+/* Hallmark · macrostructure: Detail Page (itinerary-led) · genre: editorial-detail
+ * theme: project-tokens (shadcn HSL) · studied: yes · DNA-source: url (trip.com hotel detail)
+ * redesign-scope: hero + sticky subnav + day-as-room-card; IA / routes preserved
+ */
+
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Download } from "lucide-react";
@@ -15,6 +20,7 @@ import { RichText } from "@/components/RichText";
 import SplitReveal from "@/animata/preloader/split-reveal";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { GuideEditor } from "./GuideEditor";
+import { DayCard } from "./DayCard";
 import { TRAVEL_GUIDES } from "@/data/registry";
 import { getGuide } from "@/lib/content";
 import { useAuth } from "@/lib/auth";
@@ -294,6 +300,18 @@ export function GuidePage() {
               {guide.subtitle}
             </p>
           )}
+          {guide.meta && guide.meta.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {guide.meta.map((m, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center rounded-full border border-border/70 bg-muted/40 px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                >
+                  {m}
+                </span>
+              ))}
+            </div>
+          )}
           {!editing && (
             <div className="no-print flex items-center justify-end gap-2">
               <Button size="sm" variant="outline" onClick={handleExportPdf}>
@@ -341,7 +359,14 @@ export function GuidePage() {
               {section.blocks.map((block, bi) => {
                 if (block.t === "day") {
                   di += 1;
-                  return <BlockRenderer key={bi} block={block} dayIndex={di} />;
+                  return (
+                    <DayCard
+                      key={bi}
+                      block={block}
+                      color={guide.color}
+                      dayIndex={di}
+                    />
+                  );
                 }
                 return <BlockRenderer key={bi} block={block} />;
               })}
