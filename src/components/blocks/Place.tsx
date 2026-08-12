@@ -20,20 +20,26 @@ export function PlaceChip({ place }: { place: Place }) {
       type="button"
       onClick={onClick}
       title="点击复制地点"
-      className="group inline-flex items-center gap-1.5 rounded-md border bg-card px-2.5 py-1 text-sm shadow-xs transition-colors hover:border-primary hover:bg-accent"
+      className="group inline-flex items-start gap-2 rounded-md border bg-card px-2.5 py-1.5 text-left text-sm shadow-xs transition-colors hover:border-primary hover:bg-accent"
     >
-      <MapPin className="size-3.5 shrink-0 text-primary" />
-      <span className="font-medium">{place.name}</span>
-      {place.sub && (
-        <span className="text-xs text-muted-foreground">
-          · <RichText value={place.sub} />
+      <span className="flex flex-col items-start gap-1">
+        <span className="flex items-center gap-1.5">
+          <MapPin className="size-3.5 shrink-0 text-primary" />
+          <span className="font-medium">{place.name}</span>
         </span>
-      )}
-      {copied ? (
-        <Check className="size-3.5 shrink-0 text-success" />
-      ) : (
-        <Copy className="size-3.5 shrink-0 text-muted-foreground opacity-60 transition-opacity group-hover:opacity-100" />
-      )}
+        {place.sub && (
+          <span className="pl-5 text-xs text-muted-foreground">
+            <RichText value={place.sub} />
+          </span>
+        )}
+      </span>
+      <span className="ml-auto self-center">
+        {copied ? (
+          <Check className="size-3.5 shrink-0 text-success" />
+        ) : (
+          <Copy className="size-3.5 shrink-0 text-muted-foreground opacity-60 transition-opacity group-hover:opacity-100" />
+        )}
+      </span>
     </button>
   );
 }

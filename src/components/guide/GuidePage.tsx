@@ -311,11 +311,12 @@ export function GuidePage() {
             </h1>
             {guide.badge && (
               <div
-                className="inline-flex w-fit self-stretch items-center rounded-md px-4 text-base font-medium text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+                className="inline-flex w-fit self-stretch items-center rounded-md px-4 text-base font-medium text-white shadow-none"
                 style={{ background: guide.color }}
               >
                 {/* icon stripped: only the label text remains */}
                 <RichText
+                  className="[text-shadow:0_2px_6px_rgba(0,0,0,0.5)]"
                   value={guide.badge.replace(/^\{\{icon:[a-z0-9-]+\}\}\s*/, "")}
                 />
               </div>
