@@ -3,7 +3,13 @@
  * redesign-scope: hero + sticky subnav + day-as-room-card; IA / routes preserved
  */
 
-import { useEffect, useState } from "react";
+import {
+  Fragment,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Link, useParams } from "react-router-dom";
 import { Download } from "lucide-react";
 import {
@@ -15,12 +21,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Empty, EmptyDescription, EmptyTitle, EmptyActions } from "@/components/ui/empty";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RichText } from "@/components/RichText";
 import SplitReveal from "@/animata/preloader/split-reveal";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { GuideEditor } from "./GuideEditor";
 import { DayCard } from "./DayCard";
+import FluidTabs from "@/animata/tabs/fluid-tabs";
 import { TRAVEL_GUIDES } from "@/data/registry";
 import { getGuide } from "@/lib/content";
 import { useAuth } from "@/lib/auth";
@@ -115,26 +121,44 @@ export function GuidePage() {
   }, [id]);
 
   // Flatten day blocks across all sections for the subnav + anchor ids.
-  // Computed BEFORE the early returns below so that every hook is called
-  // unconditionally (Rules of Hooks). Previously `activeDay` was declared
-  // AFTER the edit-mode early return, so toggling edit changed the hook
-  // count between renders and crashed React (#300 / white screen).
-  const days: { index: number; no: string; title: string }[] = [];
-  if (guide) {
-    let di = 0;
-    guide.sections.forEach((s) =>
-      s.blocks.forEach((b) => {
-        if (b.t === "day") {
-          di += 1;
-          days.push({ index: di, no: b.no, title: b.title });
-        }
-      })
-    );
-  }
+  // Memoised so its array reference is stable across renders — an unstable
+  // `days` would give `updateIndicator` a new identity every render and drive
+  // the sliding-indicator layout effect into an infinite setState loop.
+  const days = useMemo(() => {
+    const out: { index: number; no: string; title: string }[] = [];
+    if (guide) {
+      let di = 0;
+      guide.sections.forEach((s) =>
+        s.blocks.forEach((b) => {
+          if (b.t === "day") {
+            di += 1;
+            out.push({ index: di, no: b.no, title: b.title });
+          }
+        })
+      );
+    }
+    return out;
+  }, [guide]);
 
   const [activeDay, setActiveDay] = useState(() =>
     days[0] ? String(days[0].index) : ""
   );
+
+  const activeIndex = days.findIndex((d) => String(d.index) === activeDay);
+  const safeActiveIndex = activeIndex >= 0 ? activeIndex : 0;
+
+  // Ref to the sticky subnav so we can keep the active tab within the
+  // horizontally-scrollable row as the user scrolls the page (scroll-spy).
+  const subnavRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = subnavRef.current;
+    if (!root) return;
+    const active = root.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (active) {
+      active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [activeDay]);
 
   // Scroll-spy: highlight the day currently in view. Declared BEFORE the
   // edit-mode early return so it is called on every render (Rules of Hooks).
@@ -247,7 +271,7 @@ export function GuidePage() {
       >
         <RichText
           value={guide.emoji ?? "{{icon:compass}}"}
-          iconClassName="size-12 text-white drop-shadow sm:size-16"
+          iconClassName="size-12 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] sm:size-16"
         />
       </section>
 
@@ -264,11 +288,13 @@ export function GuidePage() {
               </Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            {(guide.breadcrumb ?? []).map((crumb, i) => (
-              <BreadcrumbItem key={i}>
-                <span className="text-muted-foreground">{crumb}</span>
+            {(guide.breadcrumb ?? []).flatMap((crumb, i) => (
+              <Fragment key={i}>
+                <BreadcrumbItem>
+                  <span className="text-muted-foreground">{crumb}</span>
+                </BreadcrumbItem>
                 <BreadcrumbSeparator />
-              </BreadcrumbItem>
+              </Fragment>
             ))}
             <BreadcrumbItem>
               <BreadcrumbPage>{guide.title}</BreadcrumbPage>
@@ -285,7 +311,7 @@ export function GuidePage() {
             </h1>
             {guide.badge && (
               <div
-                className="inline-flex w-fit self-stretch items-center rounded-md px-4 text-base font-medium text-white"
+                className="inline-flex w-fit self-stretch items-center rounded-md px-4 text-base font-medium text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
                 style={{ background: guide.color }}
               >
                 {/* icon stripped: only the label text remains */}
@@ -332,20 +358,30 @@ export function GuidePage() {
 
       {/* Sticky day subnav */}
       {days.length > 0 && (
-        <div className="no-print sticky top-[60px] z-40 border-y bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div
+          ref={subnavRef}
+          className="no-print sticky top-[60px] z-40 border-y bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/80"
+        >
           <div className="container py-2">
-            <Tabs
-              value={activeDay}
-              onValueChange={(v) => scrollToDay(Number(v))}
+            <FluidTabs
+              activeIndex={safeActiveIndex}
+              onActiveIndexChange={(i) => {
+                const d = days[i];
+                if (d) {
+                  setActiveDay(String(d.index));
+                  scrollToDay(d.index);
+                }
+              }}
+              className="w-full"
             >
-              <TabsList className="w-full justify-start gap-1 overflow-x-auto">
+              <FluidTabs.List aria-label="行程天数">
                 {days.map((d) => (
-                  <TabsTrigger key={d.index} value={String(d.index)}>
-                    {d.no}
-                  </TabsTrigger>
+                  <FluidTabs.Tab key={d.index} label={d.no}>
+                    <FluidTabs.Label>{d.no}</FluidTabs.Label>
+                  </FluidTabs.Tab>
                 ))}
-              </TabsList>
-            </Tabs>
+              </FluidTabs.List>
+            </FluidTabs>
           </div>
         </div>
       )}

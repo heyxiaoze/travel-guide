@@ -33,7 +33,7 @@ export function DayCard({
         style={color ? { backgroundImage: color } : undefined}
       >
         <div className="absolute inset-0 -z-10 bg-black/20" />
-        <div className="grid size-10 shrink-0 place-items-center rounded-lg bg-white/95 font-mono text-sm font-extrabold text-foreground shadow-sm">
+        <div className="grid size-10 shrink-0 place-items-center rounded-lg bg-white/95 font-mono text-sm font-extrabold text-slate-900 shadow-sm">
           {block.no}
         </div>
         <div className="min-w-0">
@@ -45,7 +45,7 @@ export function DayCard({
           )}
         </div>
         {block.km && (
-          <div className="ml-auto inline-flex items-center gap-1 rounded-md bg-white/90 px-2.5 py-1 font-mono text-xs font-semibold text-foreground shadow-sm">
+          <div className="ml-auto inline-flex items-center gap-1 rounded-md bg-white/90 px-2.5 py-1 font-mono text-xs font-semibold text-slate-900 shadow-sm">
             <Car className="size-3.5" /> {block.km}
           </div>
         )}

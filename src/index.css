@@ -369,3 +369,13 @@
     transition: none;
   }
 }
+
+/* Hide scrollbar only on elements with .thin-scroll (the day subnav),
+   so the site's main page scrollbar is left intact. */
+.thin-scroll {
+  scrollbar-width: none; /* Firefox */
+  scrollbar-color: transparent transparent;
+}
+.thin-scroll::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}

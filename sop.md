@@ -1,4 +1,4 @@
-# work-log · Travel Guide App 开发规范 & 工作流 SOP（本地镜像）
+# Travel Guide App 开发规范 & 工作流 SOP（本地镜像）
 
 > 本文件是 Notion「🔧 开发规范 & 工作流 SOP」的**本地镜像**。规范同源：**改一处必须同步另一处**。
 > Notion 主：🌋 Travel Guide App → 🚀 开发工作区 → 🔧 开发规范 & 工作流 SOP
@@ -69,25 +69,3 @@
 
 ---
 *最后同步：本文件与 Notion「🔧 开发规范 & 工作流 SOP」保持一致。改一处请同步另一处。*
-
-## 10. 变更记录（Changelog）
-
-> 按 §7 每次提交必写。格式：日期 · 类型 · 提交号（短 hash）· 已推送（✓ / ✗）· 一句话说明。
-
-- **2026-08-11 · 功能 · `fab20d0`(travel-guide) · ✓ · 指南详情页增加「导出 PDF」按钮（window.print + @media print 浅色化，no-print 隐藏外壳，保留封面底色）**
-  - 决策：指南详情页提供「导出 PDF」按钮，复用浏览器打印管线（`window.print`），用户在打印对话框选「存储为 PDF」；`@media print` 强制浅色主题（覆盖 `.dark` 变量）、Header/Footer/操作区/日期子导航加 `no-print` 隐藏、封面底色 `print-color-adjust:exact` 保留、避免区块分页截断。
-  - 动机：用户要求指南可离线/打印留存。纯客户端实现，无需内容仓或 Function 改动。
-  - 副作用：需 CF 重新构建静态产物上线（已随 push 自动触发）；暗色主题下打印自动转浅色，不影响屏幕显示。
-  - 关联：Notion Dev Tasks / Changelog 同步；SOP §10 双源同步。
-
-- **2026-08-11 · 功能/迁移 · `0a34fff`(travel-guide) · ✓ · 游客读取改为运行时经 `/guides` Function 拉取内容仓，彻底免重建**
-  - 决策：游客只读路径不再依赖构建期 `generated.ts` 快照，改为 Cloudflare Function `functions/guides/[[id]].ts` 在**请求时**从 `travel-guide-content` 仓拉取已发布指南（边缘缓存 `s-maxage=60` + `stale-while-revalidate`），`generated.ts` 降级为「内容仓不可达」时的离线兜底；`src/lib/content.ts` 先渲染快照再升级为运行时数据（无闪烁）。
-  - 动机：用户要求「只更新内容仓库就上线、不提交/部署主仓库」。原构建期快照模型下线上是静态产物，必须触发 `travel-guide` 重建才生效；改为运行时读取后，内容仓 `main` 分支更新约 1 分钟内自动上线。
-  - 副作用：移除 `save`/`delete` 的 `triggerDeploy`（不再需要重建）；游客每次请求依赖 GitHub raw 可达（已有边缘缓存兜底）；管理员写回仍走 GitHub Contents API 提交到内容仓。
-  - 关联：`README.md`、`work-log` SOP §2/§3 同步为运行时读取模型；Notion SOP / Changelog / Dev Tasks / Sync 同步。
-
-- **2026-08-11 · 迁移 · `49044b5`(travel-guide) / `630cf54`(content) / `56eba17`(skills) · ✓ · 指南内容收归 `travel-guide-content` 单一真相源**
-  - 决策：所有指南的创建 / 更新 / 读取统一在内容仓库 `guides/<id>.json` + `guides/index.json`；主仓库 `src/data/` 删除全部静态 `.ts` 指南模块（qinggan / chuanyu / dalian-qiqihaer / dalian-yingkou），`registry.ts` 简化为仅消费构建期生成的 `generated.ts`（来自内容仓远程），不再保留静态兜底。
-  - 动机：内容仓读取逻辑（`sync-content.mjs`）已验证跑通，主仓库不再需要冗余副本；单一真相源避免双份漂移。
-  - 副作用：`generated.ts` 被 gitignore，站点构建 / 运行依赖内容仓可达（线上经 `raw.githubusercontent.com` 拉取；本地 `predev` / `prebuild` 同）；内容仓不可达时站点回退为无指南（空兜底）。
-  - 关联：`travel-guide-addnote` skill 的「落成 `src/data/<id>.ts`」步骤已改为「落成 `guides/<id>.json` + 登记 `index.json`」；两仓库 README 同步更新。
