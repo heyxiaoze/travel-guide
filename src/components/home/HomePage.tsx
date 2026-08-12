@@ -89,7 +89,7 @@ export function HomePage() {
                   做一些，
                 </HeroTextHover>
                 <br />
-                让每次出行都
+                让出行
                 <HeroTextHover emojis={planEmojis} className="text-primary">
                   有规划
                 </HeroTextHover>
