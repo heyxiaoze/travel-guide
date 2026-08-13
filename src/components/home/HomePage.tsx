@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Empty, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
@@ -67,6 +67,15 @@ export function HomePage() {
   }, []);
   const navigate = useNavigate();
 
+  // 首页只展示最新的 4 篇（按 updatedAt 倒序），完整列表走 /discover。
+  const latestGuides = useMemo(
+    () =>
+      [...guides]
+        .sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? ""))
+        .slice(0, 4),
+    [guides]
+  );
+
   const LAST_TRIP_DATE = new Date(2026, 4, 5); // 2026-05-05
   const daysSinceLastTrip = Math.max(
     0,
@@ -81,7 +90,7 @@ export function HomePage() {
           <div className="container relative z-10">
             <div className="text-center">
               <span className="text-sm font-semibold text-primary">
-                旅行日志 · Travel Journal
+                {"「 TRAVEL GUIDE 」"}
               </span>
               <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
                 我在
@@ -96,9 +105,13 @@ export function HomePage() {
                 的东西
               </h1>
               <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-                你好，我是小泽（慢慢），一个东北版 ISTJ 的蓝老头，我的指南都是简单粗暴很丐很丐的版本，留足
-                buffer 让路上一切变化，随时有 planB 兜底
+                Hi，我是 xiaoze@木子. 🍜 (慢慢)，
+                <br />
+                东北版 ISTJ 蓝老头，
+                <br />
+                我在这里留下了一些旅行指南可以参考，希望可以帮到您.
               </p>
+
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <SlideArrowButton text="浏览全部指南" onClick={() => navigate("/discover")} />
               </div>
@@ -128,9 +141,9 @@ export function HomePage() {
       <section className="py-12">
         <div className="container">
           <div className="mb-6 flex items-baseline gap-3">
-            <h2 className="text-xl font-bold tracking-tight">全部指南</h2>
+            <h2 className="text-xl font-bold tracking-tight">最新指南</h2>
             <span className="text-sm text-muted-foreground">
-              {guides.length} 篇
+              仅供参考
             </span>
             <Button
               asChild
@@ -141,12 +154,12 @@ export function HomePage() {
               <Link to="/discover">全部</Link>
             </Button>
           </div>
-          {guides.length > 0 ? (
+          {latestGuides.length > 0 ? (
             <div
               id="guides"
               className="grid grid-cols-1 gap-5 sm:grid-cols-2"
             >
-              {guides.map((g) => (
+              {latestGuides.map((g) => (
                 <GuideCard key={g.id} guide={g} />
               ))}
             </div>
